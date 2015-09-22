@@ -1,0 +1,15 @@
+Metadata-Version: 1.1
+Name: librato-metrics
+Version: 0.4.9
+Summary: Python API Wrapper for Librato
+Home-page: http://github.com/librato/python-librato
+Author: Librato
+Author-email: support@librato.com
+License: https://github.com/librato/python-librato/blob/master/LICENSE
+Description: Python Wrapper for the Librato Metrics API: http://dev.librato.com/v1/metrics
+Platform: Posix; MacOS X; Windows
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Internet

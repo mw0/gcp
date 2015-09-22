@@ -1,0 +1,35 @@
+Licensed under the Apache License, Version 2.0 (the "License"). You
+may not use this file except in compliance with the License. A copy of
+the License is located at
+
+    http://aws.amazon.com/apache2.0/
+
+or in the "license" file accompanying this file. This file is
+distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ANY KIND, either express or implied. See the License for the specific
+language governing permissions and limitations under the License.
+
+Description: bcdoc
+        =====
+        
+        |Build Status|
+        
+        
+        Tools to help document botocore-based projects
+        
+        .. |Build Status| image:: https://travis-ci.org/boto/bcdoc.png?branch=develop
+           :target: https://travis-ci.org/boto/bcdoc
+        
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: System Administrators
+Classifier: Natural Language :: English
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.0
+Classifier: Programming Language :: Python :: 3.1
+Classifier: Programming Language :: Python :: 3.2
