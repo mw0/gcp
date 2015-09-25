@@ -26,8 +26,8 @@ button: Mash on Me
 button: Upload ---> /upload_process
 
 
-Upload/Process Action: ('/upload_process')
--------------- ------
+Upload/Process: ('/upload_process')
+--------------
 
 [If any, list of files being ignored.]
 
