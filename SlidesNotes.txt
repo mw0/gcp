@@ -1,0 +1,68 @@
+0. Title Page
+   "Which of These Does Not Belong? Anomaly Detection in Images Using a Deep
+   Neural Network and Isolation Forest"
+
+   [Which of these does not belong image from Sesame Street]
+
+1. Motivation:
+
+     "...  as we know, there are known knowns; ... things we know we know.
+     We also know there are known unknowns; ... we know there are some things
+     we do not know. But there are also unknown unknowns ~ the ones we don't
+     know we don't know."
+					Donald Rumsfeld, 12 February 2002 
+
+   o Much anomaly/fraud detection done using classifiers
+
+     + Use existing data sets, label anomalies (fraud, network intrusions, etc.)
+     + Build classifiers to look for more anomalous cases
+     + Problem: this works for finding 'anomalies' we know about
+
+     + Alternatives exist, such as assuming that good data fit into a
+       multi-variate Gaussian distribution, and that points in the tail can
+       be treated as anomalies.
+       ---> Can fail when 'ordinary' data fall into well-separated clusters.
+
+2. Solution:
+
+   o Isolation Forest
+     + Un-supervised method of statistically isolating points that have no
+       close neighbors
+     + Great advantage that there is no need to compute O(n!) distances to find
+        which points are distant from all others.
+
+     [Graphic from journal article -- animated would be best at some point.]
+
+3. When data is in the form of images
+
+   o Can work with raw pixels, but
+     + The same images translated by a handful of pixels can occupy rather
+       distinct locations in p-dimensional space.
+     + Should take advantages of excellent work done in image feature
+       representation -- deep neural nets
+     + Simple, but for most cases too simple-minded
+
+4. 'Featurize' the images before processing
+
+   o Introduce readily-available pre-trained [name of network]
+     + Feed images from data set in
+     + extract the 1000 or 4096 high-level features
+     + apply Isolation Forest
+     + determine anomaly score threshold that either
+        a) represents significance; or
+        b) which can afford to examine with greater scrutiny.
+
+5. Sample results
+
+   Golden Gate bridge photos amoung thousands of lunar images.
+   Horses amoung many cats.
+
+6. Other applications
+
+   o The main thing: find a feature representation that will place things of
+     interest in distinct locations in p-space.
+
+     + Audio: borrow from approach used by John Woodard to represent sound clips
+       by Fourier (or Wavelet) transforms. Flag those spectra that are distinct.
+     + 
+     + 
