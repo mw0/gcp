@@ -38,8 +38,12 @@ def _split_data(X):
         #print(m, M, feature_id, X.shape)
 
     split_value = np.random.uniform(m, M, 1)
-    left_X = X[feature <= split_value]
-    right_X = X[feature > split_value]
+    lefties = feature <= split_value
+    if np.count_nonzero(lefties) == 0 or  np.count_nonzero(~lefties) == 0:
+        print "np.count_nonzero(lefties): {0}, np.count_nonzero(~lefties)".format(np.count_nonzero(lefties),  np.count_nonzero(~lefties))
+    left_X = X[lefties]
+    right_X = X[~lefties]
+    # print "{0}, {1}".format(len(left_X), len(right_X))
     return left_X, right_X, feature_id, split_value
 
 
@@ -67,13 +71,15 @@ def iTree(X, add_index=False, max_depth = np.inf):
             lX, rX, feature_id, split_value = _split_data(X)
             # Uncomment the print to visualize a draft of 
             # the construction of the tree
-            #print(lX[:,-1], rX[:,-1], feature_id, split_value, n_split)
+            # print(lX[:,-1], rX[:,-1], feature_id, split_value, n_split, count)
             n_samples_lX, _ = lX.shape
             n_samples_rX, _ = rX.shape
             if n_samples_lX > 0:
                 iterate(lX, count+1)
             if n_samples_rX >0:
                 iterate(rX, count+1)
+            if n_samples_lX == 0 and n_samples_rX == 0:
+                return
 
     if add_index:
         n_samples, _ = X.shape
@@ -105,6 +111,7 @@ class iForest():
         self.max_depth = max_depth
         return
 
+
     def fit(self, X):
         print "Entering iForest.fit() ..."
         n_samples, n_features = X.shape
@@ -115,20 +122,20 @@ class iForest():
             X = np.c_[X, range(n_samples)]
 
 
-        trees = [iTree(X[np.random.choice(n_samples, 
-                                          self.sample_size, 
-                                          replace=False)],
-                       max_depth=self.max_depth) 
-                 for i in range(self.n_estimators)]
+#       trees = [iTree(X[np.random.choice(n_samples, 
+#                                         self.sample_size, 
+#                                         replace=False)],
+#                      max_depth=self.max_depth) 
+#                for i in range(self.n_estimators)]
 
-#         trees = []
-#         for i in range(self.n_estimators):
-#             print ".",
-#             iTree(X[np.random.choice(n_samples,
-#                                      self.sample_size, 
-#                                      replace=False)],
-#                   max_depth=self.max_depth) 
-
+        print "About to construct all them trees."
+        trees = []
+        for i in range(self.n_estimators):
+            print ".",
+            trees.append(iTree(X[np.random.choice(n_samples,
+                                                  self.sample_size, 
+                                                  replace=False)],
+                               max_depth=self.max_depth))
         print ""
 
         self.path_length_ = {k:None for k in range(n_samples)}
@@ -136,6 +143,7 @@ class iForest():
             self.path_length_[k] = np.array([tree[k] 
                                              for tree in trees 
                                              if k in tree])
+
         self.path_length_ = np.array([self.path_length_[k].mean() for k in 
                                       self.path_length_.keys()])
         self.anomaly_score_ = _anomaly_score(self.path_length_, self.sample_size)

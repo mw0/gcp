@@ -1,0 +1,61 @@
+Welcome Screen: ('/')
+------- ------
+This application applies the isolation forest (iForest) method to high-level features extracted from a pre-trained deep learning neural network to identify images that are anomalous relative to others being examined.
+
+You have the option of using provided image sets, or of uploading your own images.
+
+For details, see https://github.com/mw0/gcp
+
+o Show provided image sets ---> /provided_images
+o Upload my own images* ---> /upload_form
+
+
+Provided Image Sets: ('/provided_images')
+-------- ----- ----
+
+o Lunar images ---> /lunar
+o Boats ---> /boats
+o Cats (of course) ---> /cats
+
+
+Upload Form: ('/upload_form')
+------ ----
+
+*Note that only jpeg and png formats are permitted.
+button: Mash on Me
+button: Upload ---> /upload_process
+
+
+Upload/Process Action: ('/upload_process')
+-------------- ------
+
+[If any, list of files being ignored.]
+
+Processing your files.
+
+[Pizza cat image]
+
+o Show my images ---> /show_images
+  selector: 36 default
+o Show anomalies ---> /show_anomalies
+
+
+Show Images: ('/show_images')
+---- ------
+
+Your images after pre-processing:
+
+o Show anomalies ---> /show_anomalies
+
+Show Anomalies: ('/show_anomalies')
+
+
+Show Anomalies: ('/show_anomalies')
+---- ---------
+
+[Ordered table of images, color-coded anomaly scores]
+
+Wanna play again?
+
+o Show provided image sets ---> /provided_images
+o Upload my own images* ---> /upload

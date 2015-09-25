@@ -50,6 +50,10 @@ class AnomalyDetect(object):
         print "re-sizing images in {0} ".format(self.src_dir),
         self.proc_file_list = []
 
+        sizeFit = "100x100^"
+        sizeCrop = "100x100"
+#       sizeFit = "256x256^"
+#       sizeCrop = "256x256"
         if self.use_color:
             print "\nColor: True\n"
         else:
@@ -63,10 +67,10 @@ class AnomalyDetect(object):
             if self.use_color:
                 conv_comm = ["convert",
                              "{0}/{1}.{2}".format(self.src_dir, name, suffix),
-                             "-resize", "100x100^", "-set",
+                             "-resize", sizeFit, "-set",
                              # "-colorspace", "sRGB",  "-gravity",
                              "-colorspace", "RGB",
-                             "-gravity", "center", "-extent", "100x100",
+                             "-gravity", "center", "-extent", sizeCrop,
                              "{0}/{1}.png".format(self.proc_dir, name)]
                 pass
             else:
@@ -74,8 +78,8 @@ class AnomalyDetect(object):
                              "{0}/{1}.{2}".format(self.src_dir, name, suffix),
                              "-channel", "RGBA", "-matte",
                              "-colorspace", "gray", 
-                             "-resize", "100x100^",
-                             "-gravity", "center", "-extent", "100x100",
+                             "-resize", sizeFit,
+                             "-gravity", "center", "-extent", sizeCrop,
                              "{0}/{1}.png".format(self.proc_dir, name)]
                 print " ".join(conv_comm)
             convert = subprocess.Popen(conv_comm, stdout=subprocess.PIPE,
@@ -89,6 +93,7 @@ class AnomalyDetect(object):
                 self.proc_file_list.append("{0}.png".format(name))
 
         print "\nlen(self.proc_file_list): {0}\n".format(len(self.proc_file_list))
+
 
     def load_files(self, proc_dir = None):
 
