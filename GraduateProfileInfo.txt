@@ -1,0 +1,32 @@
+Mark Wilber
+
+Personal Statement:
+
+
+
+
+e-mail:			wilber@ssl.berkeley.edu
+phone:			510-282-2018
+linked-in:		www.linkedin.com/in/markwilber
+github username:	mw0
+
+Capstone Project Title:
+Anomaly Detection in Images Using a Deep Neural Network and Isolation Forest
+
+Project Description:
+Detects anomalous images from a collection, using the Isolation Forest technique applied to high-level features derived from a deep neural network.
+
+
+Capstone project repo:
+https://github.com/mw0/gcp
+
+Web App URL:
+rustytrephine.info
+
+Professional Experience:
+
+Consulting Scientist, Technomics, Inc., 10 months
+Contract Science Analyst, Aclima, Inc., 5 months
+Associate Research Physicist, Space Sciences Laboratory, U.C. Berkeley, 3 years
+Assistant Research Physicist, Space Sciences Laboratory, U.C. Berkeley, 8 years
+Contract Consultant, Knowledge Equity, 9 months

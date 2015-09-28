@@ -10,11 +10,13 @@ import time
 
 class AnomalyDetect(object):
     '''
-    Uses the Isolation Forest method to detect anomalies in photos (nominally).
+    Uses the Isolation Forest method to detect anomalies in photos.
     '''
 
+
     def __init__(self, show_calc_time = True, use_color = True,
-                 n_estimators = 200,
+                 n_estimators = 40,
+                 max_depth = 50,
                  src_dir = '/home/wilber/work/Galvanize/gcp-data/iForest/tmp',
                  proc_dir = '/home/wilber/work/Galvanize/gcp/app/static'):
 
@@ -30,6 +32,9 @@ class AnomalyDetect(object):
         self.n_estimators = n_estimators	# number of iTrees to construct
         self.show_calc_time = show_calc_time
         self.X = None
+        self.max_depth = max_depth
+        return
+
 
     def process_files(self, src_dir):
         '''
@@ -41,6 +46,10 @@ class AnomalyDetect(object):
         self.src_dir. Images are first made to be 100 x n or n x 100, for
         n >= 100, followed by cropping to 100 x 100. Extreme aspect ratio source
         images will have bad results!
+
+        !!! This is more-or-less obsolete, as the ImageNetFeaturizer class   !!!
+        !!! now will resize/stretch images to fit 256x256 pixels. Retaining  !!!
+        !!! this for cases when wish to apply iForest to raw pixels.	     !!!
         '''
 
         self.src_dir = src_dir
@@ -72,7 +81,6 @@ class AnomalyDetect(object):
                              "-colorspace", "RGB",
                              "-gravity", "center", "-extent", sizeCrop,
                              "{0}/{1}.png".format(self.proc_dir, name)]
-                pass
             else:
                 conv_comm = ["convert",
                              "{0}/{1}.{2}".format(self.src_dir, name, suffix),
@@ -93,10 +101,21 @@ class AnomalyDetect(object):
                 self.proc_file_list.append("{0}.png".format(name))
 
         print "\nlen(self.proc_file_list): {0}\n".format(len(self.proc_file_list))
+        return
 
 
     def load_files(self, proc_dir = None):
+        """
+        INPUT:
+            proc_dir	str, location of pre-processed files.
+            
+        OUTPUT: None
+        Takes 100x100 pixel images and loads them into self.X
 
+        !!! This is more-or-less obsolete, as the ImageNetFeaturizer class   !!!
+        !!! now will resize/stretch images to fit 256x256 pixels. Retaining  !!!
+        !!! this for cases when wish to apply iForest to raw pixels.	     !!!
+        """
         if proc_dir != None:
             self.proc_dir = proc_dir
 
@@ -132,11 +151,24 @@ class AnomalyDetect(object):
         print self.proc_file_list[:10]
 
         print "Exiting .load_files()."
+        return
 
 
-    def fit(self):
+    def fit(self, X = None):
+        """
+        INPUT:
+            X		X, n x p features variable. Will use values from
+			.load_files() step (in self.X), if not supplied here.
+        OUTPUT: None
+        With data in self.X, this calls the Isolation Forest model to obtain
+        anomaly scores.
+        """
+
+        if X != None:
+            self.X = X
+
         self.model = isof.iForest(n_estimators=self.n_estimators,
-                                  max_depth = 100)
+                                  max_depth=self.max_depth)
 
         if self.show_calc_time:
             print "Constructing iTrees ..."
@@ -149,6 +181,7 @@ class AnomalyDetect(object):
             mins = int(totsecs/60)
             secs = totsecs - 60.*mins
             print "Elapsed time = {0} minutes, {1} seconds".format(mins, secs)
+        return
 
 
     def show_top_k(self, k, files_to_display=None):
@@ -194,6 +227,7 @@ class AnomalyDetect(object):
                     my_files.append(((str(i), str(names[ind]),
                                      str(anom_scores[ind]))))
             return top_k, my_files
+
 
 if __name__ == '__main__':
     myModel = AnomalyDetect()
