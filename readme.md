@@ -29,7 +29,7 @@ The process for building an Isolation Tree is:
 The figure below from Lui, F.T. et al, 2008 shows representative segmentation of a 2-D feature space by random binary trees, leading to the isolation of a "ordinary" point $x_1$ and an anomolous point $x_0$.
 On average, it is more difficult to isolate a point that has near neighbors, so a larger number of branches are needed, and an ensemble of iTrees segregating $x_1$ will have a larger average length than that for iTrees isolating $x_0$.
 
-
+![](https://github.com/mw0/gcp/presentation/ITreeIsolatingPoints.png)
 
 Anomaly scores are constructed from average path length $\left< h(x) \right>$ such that:
 
