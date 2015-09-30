@@ -1,6 +1,6 @@
 # Anomaly Detection in Images Using a Deep Neural Network and Isolation Forest
 
-** *A Capstone Project for the Galvanize Data Science Immersive Program, by Mark Wilber*
+** *A Capstone Project for the Galvanize Data Science Immersive Program, by Mark Wilber* **
 
 ## Overview:
 
@@ -24,10 +24,10 @@ It works by constructing an ensemble of 'isolation trees', and computing average
 The process for building an Isolation Tree is:
 * randomly select a feature on which to branch;
 * randomly select a value within the range of that feature to split the node;
-* repeat the process until a single point is isolated, or until a maximum tree lengthis reached.
+* repeat the process until a single point is isolated, or until a maximum tree length is reached.
 
-The figure below from Lui, F.T. et al, 2008 shows representative segmentation of a 2-D feature space by random binary trees, leading to the isolation of a "ordinary" point $x_1$ and an anomolous point $x_0$.
-On average, it is more difficult to isolate a point that has near neighbors, so a larger number of branches are needed, and an ensemble of iTrees segregating $x_1$ will have a larger average length than that for iTrees isolating $x_0$.
+The figure below from Lui, F.T. et al, 2008 shows representative segmentation of a 2-D feature space by random binary trees, leading to the isolation of a "ordinary" point <em>x<sub>1</sub></em> and an anomolous point <em>x<sub>0</sub></em>.
+On average, it is more difficult to isolate a point that has near neighbors, so a larger number of branches are needed, and an ensemble of iTrees segregating <em>x<sub>1</sub></em> will have a larger average length than that for iTrees isolating <em>x<sub>0</sub></em>.
 
 ![](https://github.com/mw0/gcp/presentation/ITreeIsolatingPoints.png)
 
