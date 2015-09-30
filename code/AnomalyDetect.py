@@ -7,6 +7,7 @@ import iForest as isof
 import subprocess
 import numpy as np
 import time
+from collections import OrderedDict
 
 class AnomalyDetect(object):
     '''
@@ -15,8 +16,8 @@ class AnomalyDetect(object):
 
 
     def __init__(self, show_calc_time = True, use_color = True,
-                 n_estimators = 40,
-                 max_depth = 50,
+                 n_estimators = 60,
+                 max_depth = 40,
                  src_dir = '/home/wilber/work/Galvanize/gcp-data/iForest/tmp',
                  proc_dir = '/home/wilber/work/Galvanize/gcp/app/static'):
 
@@ -167,14 +168,14 @@ class AnomalyDetect(object):
         if X != None:
             self.X = X
 
-        self.model = isof.iForest(n_estimators=self.n_estimators,
+        self.iFmodel = isof.iForest(n_estimators=self.n_estimators,
                                   max_depth=self.max_depth)
 
         if self.show_calc_time:
             print "Constructing iTrees ..."
             start = time.time()
 
-        self.model.fit(self.X)
+        self.iFmodel.fit(self.X)
 
         if self.show_calc_time:
             totsecs = time.time() - start
@@ -184,7 +185,41 @@ class AnomalyDetect(object):
         return
 
 
-    def show_top_k(self, k, files_to_display=None):
+    def show_top_k(self, k):
+        '''
+        INPUT:
+            k			number of top anomaly scores to show
+        OUTPUT:
+            dict		key: file_order, value: (file_name, anom_score)
+        This is to accommodate kludge needed to interact with Flask.
+        '''
+
+        anom_scores = self.iFmodel.anomaly_score_
+        sort_indices = np.argsort(anom_scores)
+        print "\nk: {0}".format(k)
+        cryStr = "Only {0} anomaly scores returned by model. Cannot return {1}."
+        nScores = len(anom_scores)
+        if k > nScores:
+            print cryStr.format(nScores, k)
+            k = nScores
+        print ""
+
+#       print self.proc_file_list, "\n"
+#       print "# files in self.proc_file_list: {0}".format(len(self.proc_file_list))
+        top_k = OrderedDict()
+        for i in range(1, k + 1):
+            ind = sort_indices[-i]
+            print i, " ",
+            print sort_indices[-i], " ",
+            print self.proc_file_list[ind], " ",
+            print anom_scores[ind]
+            top_k[str(i)] =  (ind, self.proc_file_list[ind],
+                              anom_scores[ind])
+
+        return top_k
+
+
+    def show_top_k_ori(self, k, files_to_display=None):
         '''
         INPUT:
             k			number of top anomaly scores to show
@@ -195,7 +230,7 @@ class AnomalyDetect(object):
         List k files and anomaly scores in ranked order.
         '''
 
-        anom_scores = self.model.anomaly_score_
+        anom_scores = self.iFmodel.anomaly_score_
         sort_indices = np.argsort(anom_scores)
         print "\nk: {0}".format(k)
         cryStr = "Only {0} anomaly scores returned by model. Cannot return {1}."
@@ -205,13 +240,13 @@ class AnomalyDetect(object):
             k = nScores
         print ""
 
-        print self.proc_file_list, "\n"
-        print "# files in self.proc_file_list: {0}".format(len(self.proc_file_list))
+#       print self.proc_file_list, "\n"
+#       print "# files in self.proc_file_list: {0}".format(len(self.proc_file_list))
         top_k = []
         for i in range(1, k + 1):
             ind = sort_indices[-i]
             print i, " ",
-            print sort_indices[-i], " "
+            print sort_indices[-i], " ",
             print self.proc_file_list[ind], " ",
             print anom_scores[ind]
             top_k.append((str(i), self.proc_file_list[ind],

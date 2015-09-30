@@ -6,27 +6,22 @@
 
   <body>
         <h2>Your Images</h2>
-        <p>&nbsp;</p>
-        <form action="/do_it" method="POST">
-        <input type="radio" name="action" value="show anomalies" checked hidden>
-         <select name="anomaly count">
-             <option value="4">4</option>
-             <option value="8">8</option>
-             <option value="12" selected>12</option>
-             <option value="16">16</option>
-             <option value="20">20</option>
-        </select>
+        <form action="/show_anomalies" method="POST">
         <input type="submit" value="Show anomalies.">
+        </form>
+        <h4>The neural network model will ingest these images after re-sizing them to 256x256 pixel squares. Here they are re-sized to a 128x128 format, indicating how much distortion will be introduced.</h4>
         <p>&nbsp;</p>
         <table border="1px solid black" style="width:300px">
-        {% for img0, img1, img2, img3, img4, img5 in data %}
+        {% for img0, img1, img2, img3, img4, img5, img6, img7 in data %}
             <tr>
-	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img0) }}"></img></td>
-	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img1) }}"></img></td>
-	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img2) }}"></img></td>
-	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img3) }}"></img></td>
-	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img4) }}"></img></td>
-	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img5) }}"></img></td>
+	    <td><img src="{{ url_for('static', filename=img0) }}" style="width:128px;height:128px;"></img></td>
+	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img1) }}" style="width:128px;height:128px;"></img></td>
+	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img2) }}" style="width:128px;height:128px;"></img></td>
+	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img3) }}" style="width:128px;height:128px;"></img></td>
+	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img4) }}" style="width:128px;height:128px;"></img></td>
+	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img5) }}" style="width:128px;height:128px;"></img></td>
+	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img6) }}" style="width:128px;height:128px;"></img></td>
+	    <td>{{ i}}</td><td><img src="{{ url_for('static', filename=img7) }}" style="width:128px;height:128px;"></img></td>
             </tr>
         {% endfor %}
         </table>

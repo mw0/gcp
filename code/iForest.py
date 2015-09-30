@@ -30,12 +30,18 @@ def _split_data(X):
     n_samples, n_columns = X.shape
     n_features = n_columns - 1
     m = M = 0
+
+    # Avoid attempting split on feature for which values are all equal
     while m == M:
         feature_id = np.random.randint(low=0, high=n_features)
         feature = X[:, feature_id]
         m = feature.min()
         M = feature.max()
-        #print(m, M, feature_id, X.shape)
+        # print m, M, feature_id, X.shape
+
+    # handle case of two identical values for selected feature
+    if n_samples == 2:
+        print "m: {0}, M: {1}".format(m, M)
 
     split_value = np.random.uniform(m, M, 1)
     lefties = feature <= split_value
@@ -43,7 +49,8 @@ def _split_data(X):
         print "np.count_nonzero(lefties): {0}, np.count_nonzero(~lefties)".format(np.count_nonzero(lefties),  np.count_nonzero(~lefties))
     left_X = X[lefties]
     right_X = X[~lefties]
-    # print "{0}, {1}".format(len(left_X), len(right_X))
+
+    print "{0}, {1}".format(len(left_X), len(right_X))
     return left_X, right_X, feature_id, split_value
 
 
@@ -59,10 +66,12 @@ def iTree(X, add_index=False, max_depth = np.inf):
         n_features = n_columns - 1
 
         if count > max_depth:
+            # print "count > max_depth"
             for index in X[:,-1]:
                 n_split[index] = count
             return
 
+        print "\nn_samples: {0}".format(n_samples)
         if n_samples == 1:
             index = X[0, n_columns-1]
             n_split[index] = count
@@ -76,12 +85,13 @@ def iTree(X, add_index=False, max_depth = np.inf):
             n_samples_rX, _ = rX.shape
             if n_samples_lX > 0:
                 iterate(lX, count+1)
-            if n_samples_rX >0:
+            if n_samples_rX > 0:
                 iterate(rX, count+1)
             if n_samples_lX == 0 and n_samples_rX == 0:
                 return
 
     if add_index:
+        # print "add_index True"
         n_samples, _ = X.shape
         X = np.c_[X, range(n_samples)]
 
@@ -122,21 +132,21 @@ class iForest():
             X = np.c_[X, range(n_samples)]
 
 
-#       trees = [iTree(X[np.random.choice(n_samples, 
-#                                         self.sample_size, 
-#                                         replace=False)],
-#                      max_depth=self.max_depth) 
-#                for i in range(self.n_estimators)]
+        trees = [iTree(X[np.random.choice(n_samples, 
+                                          self.sample_size, 
+                                          replace=False)],
+                       max_depth=self.max_depth) 
+                 for i in range(self.n_estimators)]
 
-        print "About to construct all them trees."
-        trees = []
-        for i in range(self.n_estimators):
-            print ".",
-            trees.append(iTree(X[np.random.choice(n_samples,
-                                                  self.sample_size, 
-                                                  replace=False)],
-                               max_depth=self.max_depth))
-        print ""
+#       print "About to construct all them trees."
+#       trees = []
+#       for i in range(self.n_estimators):
+#           print ".",
+#           trees.append(iTree(X[np.random.choice(n_samples,
+#                                                 self.sample_size, 
+#                                                 replace=False)],
+#                              max_depth=self.max_depth))
+#       print ""
 
         self.path_length_ = {k:None for k in range(n_samples)}
         for k in self.path_length_.keys():

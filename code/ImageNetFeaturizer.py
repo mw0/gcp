@@ -78,15 +78,16 @@ class ImageNetFeaturizer(object):
 
         status_string = 'OK'
 
-        # Start by testing all files and seeing if they look like images:
         self.src_dir = src_directory
         print "src_directory: {0}".format(self.src_dir)
 
         path_files = glob.glob1(self.src_dir, "*")
         print "path_files:\n", path_files
-
-        fileCt = len(path_files)
         print "re-sizing images in {0} ".format(self.src_dir),
+
+        # --------------------------------------------------------------- #
+        # Start by testing all files and seeing if they look like images: #
+        # --------------------------------------------------------------- #
 
         self.src_file_list = []
         self.ignored_files = []
@@ -106,13 +107,20 @@ class ImageNetFeaturizer(object):
                 self.src_file_list.append("{0}.{1}".format(name, suffix))
 
 
-        # set net to batch size of file count:
-        self.net.blobs['data'].reshape(len(self.src_file_list), 3, 227, 227)
+        # set net to batch size of file count (maximimum size of 128):
+        max_count = 128
+        file_count = min([max_count, len(self.src_file_list)])
+        print "file_count: ", file_count
+        print "Setting net.blobs['data'] shape ... "
+        print type(self.net.blobs['data'])
+        self.net.blobs['data'].reshape(file_count, 3, 227, 227)
+        
+        print "net.blogs reshaped."
 
         # Do the ingest/pre-process:
         for i, myfile in enumerate(self.src_file_list):
-            if i > 119:
-                status_string = 'Cannot process all images; limit 120'
+            if i >= max_count:
+                status_string = 'Cannot process all images; limit {0}'.format(max_count)
                 break
             path_file = self.src_dir + '/' + myfile
             print "{0}:\t{1}".format(i, path_file)

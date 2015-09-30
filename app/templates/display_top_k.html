@@ -7,12 +7,20 @@
     <body>
         <h2>Most Anomalous Files</h2>
         <p>&nbsp;</p>
-        <form action="/form" method="POST">
+        <form action="/upload_form" method="POST">
         <input type="submit" value="So much fun! Start all over.">
         <p>&nbsp;</p>
         <table border="1px solid black" style="width:300px">
-        {% for i, file_name, anom_score in data %}
-            <tr><td>{{ i}}</td><td><img src="{{ url_for('static', filename=file_name) }}"></img></td><td>{{ anom_score}}</td>
+	    <tr><th>fc7&nbsp;rank</th><th>image</th><th>fc6&nbsp;score</th>
+	        <th>fc7&nbsp;score</th><th>fc8&nbsp;score</th>
+	        <td>&nbsp;</td>
+	        <th>fc7&nbsp;rank</th><th>image</th><th>fc6&nbsp;score</th>
+	        <th>fc7&nbsp;score</th><th>fc8&nbsp;score</th>
+	    </tr>
+        {% for i0, file_name0, fc6_col0, fc6_score0, fc7_col0, fc7_score0, fc8_col0, fc8_score0, i1, file_name1, fc6_col1, fc6_score1, fc7_col1, fc7_score1, fc8_col1, fc8_score1 in data %}
+            <tr><td>{{i0}}</td><td><img src="{{ url_for('static', filename=file_name0) }}" style="width:128px;height:128px;"></img></td><td bgcolor = "{{fc6_col0}}">{{fc6_score0}}</td><td bgcolor = "{{fc7_col0}}">{{fc7_score0}}</td><td  bgcolor = "{{fc8_col0}}">{{fc8_score0}}</td>
+            <td>&nbsp;</td>
+	        <td>{{i1}}</td><td><img src="{{ url_for('static', filename=file_name1) }}" style="width:128px;height:128px;"></img></td><td bgcolor = "{{fc6_col1}}">{{fc6_score1}}</td><td bgcolor = "{{fc7_col1}}">{{fc7_score1}}</td><td  bgcolor = "{{fc8_col1}}">{{fc8_score1}}</td>
             </tr>
         {% endfor %}
         </table>

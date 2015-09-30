@@ -1,17 +1,22 @@
+#!/usr/bin/python
+
+import numpy as np
+import ImageNetFeaturizer as inf
+import AnomalyDetect as ad
+
 import random
+import os
+import glob
 import requests
 import cPickle as pickle
 from flask import Flask, request, render_template
 import flask
-from AnomalyDetect import AnomalyDetect
 from werkzeug import secure_filename
-import os
 
 app = Flask(__name__)
 
 background_img = '/home/wilber/work/Galvanize/gcp-data/iForest/white256x256.png'
 #background_img = '/home/wilber/work/Galvanize/gcp-data/iForest/white100x100.png'
-pizzaCat = '/home/wilber/work/Galvanize/gcp-data/iForest/pizzaCat.gif'
 
 UPLOAD_FOLDER = '/home/wilber/work/Galvanize/gcp-data/iForest/tmp'
 PROCESSED_FOLDER = '/home/wilber/work/Galvanize/gcp/app/static'
@@ -52,39 +57,7 @@ def index():
     </p>
 
     <p>&nbsp;</p><p class="footnote">
-    &sup1;<a href="http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf">Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems. 2012</a>.
-    &sup2;<a href="http://dx.doi.org/10.1109/ICDM.2008.17">Liu, F.T., K. M. Ting and Z.-H. Zhou, <em>Isolation Forest</em>, Eighth IEEE International Conference on Data Mining, 2008, ICDM 08., p413., 2008.</a><br>
-    </p>
-    </body>
-    </html>
-    '''
-def index():
-    '''
-    This is the welcome page. A simple messagge and a couple of buttons to
-    push to get started.
-    '''
-
-    return '''
-    <html>
-    <body>
-    <h2>Anomaly Detection Using Isolation Forest.</h2>
-    This application finds anomalies in images. It does this by feeding images through a pre-trained deep learning neural network&sup1;, extracting high-level feature weights, and constructing isolation trees&sup2; using those weights.
-
-    <p>For more infomation on this, see the <a href="http://github.com/mw0/gcp">project description</a>.
-
-    <p>
-    You can view anomaly scores computed for images we provide, or you can upload your own:
-
-    <form action="/provided_images" method="POST">
-        <input type="submit" value="Use existing examples" disabled>
-    </form>
-    <form action="/upload_form" method="POST">
-        <input type="submit" value="I have images to upload">
-    </form>
-    </p>
-
-    <p>&nbsp;</p><p class="footnote">
-    &sup1;<a href="http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf">Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems. 2012</a>.
+    &sup1;<a href="http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf">Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems. 2012</a>.<br>
     &sup2;<a href="http://dx.doi.org/10.1109/ICDM.2008.17">Liu, F.T., K. M. Ting and Z.-H. Zhou, <em>Isolation Forest</em>, Eighth IEEE International Conference on Data Mining, 2008, ICDM 08., p413., 2008.</a><br>
     </p>
     </body>
@@ -124,42 +97,100 @@ def upload_process():
 
     print "\nupload_process()\n"
 
-    myModel.src_file_list = []
-    myModel.proc_file_list = []
+    ADmodel.src_file_list = []
+#   ADmodel.proc_file_list = []
     os.system('rm {0}/*'.format(UPLOAD_FOLDER))
-    os.system("scp " + pizzaCat + " {0}/".format(UPLOAD_FOLDER))
     retPage = '''
     <html>
     <body>
-    <h2>Uploading/Processing Your Files</h2>
+    <h2>Uploading Your Files</h2>
     <p>&nbsp;</p>
 
-    <center>
-    <img src="static/pizzaCat.gif">
-    </center>
-
+    <form action="/display_images" method="POST">
+        <input type="submit" value="Display Images">
+    </form> 
+    <form action="/show_anomalies" method="POST">
+        <input type="submit" value="Show Anomalies">
+    </form> 
 
     <table>
     <tr align="left"><th>i</th><th>File name</th><th>Status</th></tr>
     '''
     uploaded_files = flask.request.files.getlist("file[]")
     OKstr = "<tr><td>{0}</td><td>{1}</td><td>OK</td></tr>"
-    sadStr = "<tr><td>{0}</td><td>{1}</td><td>Not permitted (ignored)</td></tr>"
+    sadStr = "<tr><td>{0}</td><td>{1}</td><td>Not&nbsp;permitted&nbsp;(ignored)</td></tr>"
+    bad_guys = 0
     for i, file in enumerate(uploaded_files):
 #       print file.filename.encode('utf-8', 'ignore')
         print file.filename.encode('utf-8')
         if allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            retPage += OKstr.format(i + 1, file.filename.encode('utf-8', 'ignore'))
+#           retPage += OKstr.format(i + 1, file.filename.encode('utf-8', 'ignore'))
         else:
+            bad_guys += 0
             retPage += sadStr.format(i + 1, file.filename.encode('utf-8', 'ignore'))
 
+    if bad_guys == 0:
+        retPage += '<tr><td>&nbsp;</td><td align="center">All files ingested.</td><td>OK</td></tr>'
     retPage += "</table>\n</body>\n</html>"
     return retPage
 
+
+@app.route('/display_images', methods=["GET", "POST"])
+def display_images():
+    print "\nAction selected: show images\n"
+    path_files = glob.glob(os.path.join(UPLOAD_FOLDER, "*"))
+    fileCt = len(path_files)
+    print "file count: ", fileCt
+#   print "\npath_files:\n", path_files, "\n"
+    files = map(lambda x: x.split('/')[-1], path_files)
+#   print "\nfiles:", files
+    upload_ct = len([name for name in os.listdir(UPLOAD_FOLDER)
+                     if os.path.isfile(name)])
+    if upload_ct > 0:
+        for ext in ALLOWED_EXTENSIONS:
+            print 'execute: rm -f {0}/*.{1}'.format(PROCESSED_FOLDER, ext)
+            os.system('rm -f {0}/*.{1}'.format(PROCESSED_FOLDER, ext))
+        print 'execute: mv {0}/* {1}'.format(UPLOAD_FOLDER, PROCESSED_FOLDER)
+    else:
+        os.system('mv {0}/* {1}'.format(UPLOAD_FOLDER, PROCESSED_FOLDER))
+    modulo6 = len(path_files) % 6
+    if modulo6 != 0:
+        files += ['white256x256.png']*(6 - modulo6)
+#   print "\nfiles:", files
+    files = [files[x:x+6] for x in xrange(0, len(files), 6)]
+    return render_template('display_images.html', data = files)
+
+
+@app.route('/show_anomalies', methods=["GET", "POST"])
+def show_anomalies():
+    print "\nAction selected: show anomalies\n"
+    print "\n", dir(INFmodel), "\n"
+    print "ImageNetFeaturizer process_images status: ", \
+          INFmodel.preprocess_images(PROCESSED_FOLDER)
+
+    print "Images have been pre-processed."
+    X = myINF.featurize(fc_level = 7)
+#   X = myINF.featurize(fc_level = 6)
+    print "We have extracted features!"
+    print np.shape(X)
+    ADmodel.X = X
+    ADmodel.proc_file_list = INFmodel.src_file_list
+    print "Attempting iForest."
+    ADmodel.fit()
+    print ADmodel.iFmodel.anomaly_score_
+    print ""
+    top_k_list = ADmodel.show_top_k(10)
+    print top_k_list
+#   for name, image, score in top_k_list:
+
+#       if score < 5.5:
+            
+    return ""
+
 #    os.system('rm {0}/*.png'.format(PROCESSED_FOLDER))
-#    myModel.process_files(UPLOAD_FOLDER)
+#    ADmodel.process_files(UPLOAD_FOLDER)
 #    os.system('scp {0} {1}/'.format(background_img, PROCESSED_FOLDER))
 #    return '''
 #    <form action="/do_it" method="POST">
@@ -222,8 +253,8 @@ def allowed_file(filename):
 
 @app.route('/upload', methods=["POST"])
 def upload():
-    myModel.src_file_list = []
-    myModel.proc_file_list = []
+    ADmodel.src_file_list = []
+#   ADmodel.proc_file_list = []
     os.system('rm {0}/*'.format(UPLOAD_FOLDER))
     retPage = '''
     <html>
@@ -239,7 +270,7 @@ def upload():
     '''
     uploaded_files = flask.request.files.getlist("file[]")
     OKstr = "<tr><td>{0}</td><td>{1}</td><td>OK</td></tr>"
-    sadStr = "<tr><td>{0}</td><td>{1}</td><td>Not permitted (ignored)</td></tr>"
+    sadStr = "<tr><td>{0}</td><td>{1}</td><td>Not&nbsp;permitted&nbsp;(ignored)</td></tr>"
     for i, file in enumerate(uploaded_files):
 #       print file.filename.encode('utf-8', 'ignore')
         print file.filename.encode('utf-8')
@@ -259,7 +290,7 @@ def do_something():
     if action == "process images":
         print "\nAction selected: process images\n"
         os.system('rm {0}/*.png'.format(PROCESSED_FOLDER))
-        myModel.process_files(UPLOAD_FOLDER)
+        ADmodel.process_files(UPLOAD_FOLDER)
         os.system('scp {0} {1}/'.format(background_img, PROCESSED_FOLDER))
         return '''
     <form action="/do_it" method="POST">
@@ -278,7 +309,7 @@ def do_something():
         '''
     elif action == "show images":
         print "\nAction selected: show images\n"
-        files = myModel.proc_file_list
+#       files = ADmodel.proc_file_list
 #       print "\nfiles:", files
         modulo6 = len(files) % 6
         if modulo6 != 0:
@@ -291,13 +322,14 @@ def do_something():
         print "\nAction selected: show anomalies\n"
         k = str(request.form['anomaly count'])
         print "\nk: {0}".format(k)
-        myModel.load_files()
-        myModel.fit()
+        ADmodel.load_files()
+        ADmodel.fit()
         return render_template('display_top_k.html',
-                               data = myModel.show_top_k(int(k)))
+                               data = ADmodel.show_top_k(int(k)))
 
 
 if __name__ == '__main__':
-    myModel = AnomalyDetect(use_color=False)
-#   myModel = AnomalyDetect(use_color=True)
+    INFmodel = inf.ImageNetFeaturizer()
+    ADmodel = ad.AnomalyDetect(use_color=True)
+
     app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)
