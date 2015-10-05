@@ -38,9 +38,9 @@ On average, it is more difficult to isolate a point that has near neighbors, so 
 
 ![Isolating Points with iTrees](https://github.com/mw0/gcp/blob/master/presentation/ITreeIsolatingPoints.png)
 
-Anomaly scores are constructed from average path length <em>&lang;h(x)&rang;</em> such that:
+Anomaly scores are constructed from average path length &lang;<em>h(</em><em>x</em>)&rang; such that:
 
 ![anomaly score limits](https://github.com/mw0/gcp/blob/master/sx.png)
 
-for <em>&lang;h(x)&rang;</em> the ensemble average path length required to isolate point <em>x</em>.
+for &lang;<em>h</em>(<em>x</em>)&rang; the ensemble average path length required to isolate point <em>x</em>.
 
