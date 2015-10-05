@@ -43,4 +43,15 @@ Anomaly scores are constructed from average path length &lang;<em>h(</em><em>x</
 ![anomaly score limits](https://github.com/mw0/gcp/blob/master/sx.png)
 
 for &lang;<em>h</em>(<em>x</em>)&rang; the ensemble average path length required to isolate point <em>x</em>.
+Typically, scores < 0.5 indicate nothing unusual, while scores > 0.6 suggest an outlier.
+The significance of particular scores, however, depend upon the homogeneity of the bulk of the sample, which here will be dependent to some degree on the choice for the high-level features of the image.
 
+## The Deep Convolution Neural Network
+
+Not long ago it would take a team of experts to engineer useful features for machine learning applications.
+Recently, however, deep convolution neural networks are made available via commercial products, or through academic repositories.
+The (http://caffe.berkeleyvision.org/ "Caffe Project") at U.C. Berkeley's Vision and Learning Center is a very fast deep learning framework, and specs for a variety of models are available through their (http://caffe.berkeleyvision.org/model_zoo.html "Model Zoo").
+We have obtained their BVLC Reference CaffeNet model&sup2; ("AlexNet"), with weights pre-trained on 1.2 million images from the ImageNet LSVRC-2010 data set.
+
+
+&sup2;(http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf "Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems. 2012")
