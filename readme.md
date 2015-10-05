@@ -33,14 +33,14 @@ The process for building an Isolation Tree is:
 * randomly select a value within the range of that feature to split the node;
 * repeat the process until a single point is isolated, or until a maximum tree length is reached.
 
-The figure below from Lui, F.T. et al, 2008 shows representative segmentation of a 2-D feature space by random binary trees, leading to the isolation of an "ordinary" point <em>x<sub>1</sub></em> and an anomolous point <em>x<sub>0</sub></em>.
-On average, it is more difficult to isolate a point that has near neighbors, so a larger number of branches are needed, and an ensemble of iTrees segregating <em>x<sub>1</sub></em> will have a larger average length than that for iTrees isolating <em>x<sub>0</sub></em>.
+The figure below from Lui, F.T. et al, 2008 shows representative segmentation of a 2-D feature space by random binary trees, leading to the isolation of an "ordinary" point <em>x<sub>i</sub></em> and an anomolous point <em>x<sub>0</sub></em>.
+On average, it is more difficult to isolate a point that has near neighbors, so a larger number of branches are needed, and an ensemble of iTrees segregating <em>x<sub>i</sub></em> will have a larger average length than that for iTrees isolating <em>x<sub>0</sub></em>.
 
 ![Isolating Points with iTrees](https://github.com/mw0/gcp/blob/master/presentation/ITreeIsolatingPoints.png)
 
 Anomaly scores are constructed from average path length <em>&lang;h(x)&rang;</em> such that:
 
-<em>s(x) &rarr;</em>  
+![anomaly score limits](https://github.com/mw0/gcp/blob/master/presentation/sx.png)
 
-&nbsp;&nbsp;&nbsp;&nbsp;1, &lang;h(x)&rang; &rarr; 0  
-&nbsp;&nbsp;&nbsp;&nbsp;0, &lang;h(x)&rang; &rarr; &infin;
+for <em>&lang;h(x)&\rang;</em> the ensemble average path length required to isolate point <em>x</em>.
+
