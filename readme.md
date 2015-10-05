@@ -42,5 +42,5 @@ Anomaly scores are constructed from average path length <em>&lang;h(x)&rang;</em
 
 <em>s(x) &rarr;</em>  
 
-    1, &lang;h(x)&rang; &rarr; 0  
-    0, &lang;h(x)&rang; &rarr; &infin;
+&nbsp;&nbsp;&nbsp;&nbsp;1, &lang;h(x)&rang; &rarr; 0  
+&nbsp;&nbsp;&nbsp;&nbsp;0, &lang;h(x)&rang; &rarr; &infin;
