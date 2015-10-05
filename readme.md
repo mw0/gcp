@@ -2,7 +2,7 @@
 
 #### *A Capstone Project for the Galvanize Data Science Immersive Program, by Mark Wilber*
 
-[Which of these do not belong?](https://github.com/mw0/gcp/blob/d14956c28dfe85bb71cf639ce8057eedd836a114/SesameStreetWhichNotAlike.png)
+![Which of these do not belong?](https://github.com/mw0/gcp/SesameStreetWhichNotAlike.png)
 
 ## Overview:
 
