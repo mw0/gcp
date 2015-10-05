@@ -12,10 +12,10 @@ In my former work as a research scientist I was always on the look-out for anoma
   
 Now that I am looking at general techniques for inferring meaning from data, I ask the question of how to find anomalies automatically. I've long wanted to work with deep convolution neural networks (DCNNs), so images are a natural, but far from exhaustive, choice of subject matter. 
 
-The [app linked here](http://www.rustytrephine.info "Try this App!") shows examples of images that have been processed through a DCNN, and returns those with the 10 highest scores computed by an anomaly algorithm.
-To be more specific, high-level feature weights are extracted from the back end of the DCNN, and fed into an Isolation Forest routine. Those found to be least like the bulk of the photos in the collection are listed.  
-  
-It would be too easy to cherry pick results, so you also have the option of trying it out yourself with photos you upload.
+The [app linked here](http://www.rustytrephine.info "Try this App! ") shows examples of images that have been given anomaly scores indicating how much they differ from the overall collection of photos provided.
+To be more specific, a batch of images are fed into a deep convolution neural network (DCNN), and high-level feature weights are extracted from it. These in turn are fed into an Isolation Forest anomaly algorithm, and those images with the highest scores are displayed.
+
+It would be too easy to cherry pick results, so you also have the option of trying it out yourself with photos that you upload.
 
 ## Outline:
 * Isolation Forest
@@ -40,8 +40,6 @@ On average, it is more difficult to isolate a point that has near neighbors, so 
 
 Anomaly scores are constructed from average path length <em>&lang;h(x)\&rang;</em> such that:
 
-$s \longrightarrow \begin{cases}
-  1, & \left< h(x) \rightarrow 0 \\
-  0, & \left< h(x) \rightarrow \infty
-\end{cases}
-$
+<em>s(x) &rarr;</em>
+    1, &lang;h(x)&rang; &rarr; 0
+    0, &lang;h(x)&rang; &rarr; &infin;
