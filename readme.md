@@ -2,7 +2,9 @@
 
 #### *A Capstone Project for the Galvanize Data Science Immersive Program, by Mark Wilber*
 
+<center>
 ![Which of these do not belong?](https://github.com/mw0/gcp/blob/master/SesameStreetWhichNotAlike.png)
+</center>
 
 ## Overview:
 
