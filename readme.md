@@ -50,8 +50,8 @@ The significance of particular scores, however, depend upon the homogeneity of t
 
 Not long ago it would take a team of experts to engineer useful features for machine learning applications.
 Recently, however, deep convolution neural networks are made available via commercial products, or through academic repositories.
-The (http://caffe.berkeleyvision.org/ "Caffe Project") at U.C. Berkeley's Vision and Learning Center is a very fast deep learning framework, and specs for a variety of models are available through their (http://caffe.berkeleyvision.org/model_zoo.html "Model Zoo").
+The [Caffe Project](http://caffe.berkeleyvision.org/) at U.C. Berkeley's Vision and Learning Center is a very fast deep learning framework, and specs for a variety of models are available through their [Model Zoo](http://caffe.berkeleyvision.org/model_zoo.html).
 We have obtained their BVLC Reference CaffeNet model&sup2; ("AlexNet"), with weights pre-trained on 1.2 million images from the ImageNet LSVRC-2010 data set.
 
 
-&sup2;(http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf "Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems. 2012")
+&sup2;[Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems, 2012](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf)
