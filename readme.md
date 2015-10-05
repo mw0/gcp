@@ -11,7 +11,7 @@ In my former work as a research scientist I was always on the look-out for anoma
 Now that I am looking at general techniques for inferring meaning from data, I ask the question of how to find anomalies automatically. I've long wanted to work with deep convolution neural networks (DCNNs), so images are a natural, but far from exhaustive, choice of subject matter. 
 
 The [app linked here](http://www.rustytrephine.info "Try this App!") shows examples of images that have been processed through a DCNN, and returns those with the 10 highest scores computed by an anomaly algorithm.
-To be more specific, high-level feature weights are extracted from the back end of the DCNN, and fed into an Isolation Forest routine. Those found to be least alike the bulk of the photos in the collection are listed.  
+To be more specific, high-level feature weights are extracted from the back end of the DCNN, and fed into an Isolation Forest routine. Those found to be least like the bulk of the photos in the collection are listed.  
   
 It would be too easy to cherry pick results, so you also have the option of trying it out yourself with photos you upload.
 
