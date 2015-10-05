@@ -40,7 +40,7 @@ On average, it is more difficult to isolate a point that has near neighbors, so 
 
 Anomaly scores are constructed from average path length <em>&lang;h(x)&rang;</em> such that:
 
-![anomaly score limits](https://github.com/mw0/gcp/blob/master/presentation/sx.png)
+![anomaly score limits](https://github.com/mw0/gcp/blob/master/sx.png)
 
-for <em>&lang;h(x)&\rang;</em> the ensemble average path length required to isolate point <em>x</em>.
+for <em>&lang;h(x)&rang;</em> the ensemble average path length required to isolate point <em>x</em>.
 
