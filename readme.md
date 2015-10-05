@@ -38,20 +38,43 @@ On average, it is more difficult to isolate a point that has near neighbors, so 
 
 ![Isolating Points with iTrees](https://github.com/mw0/gcp/blob/master/presentation/ITreeIsolatingPoints.png)
 
-Anomaly scores are constructed from average path length &lang;<em>h(</em><em>x</em>)&rang; such that:
+Anomaly scores <em>s</em>(<em>x</em>) are constructed from average path length &lang;<em>h(</em><em>x</em>)&rang; such that:
 
 ![anomaly score limits](https://github.com/mw0/gcp/blob/master/sx.png)
 
-for &lang;<em>h</em>(<em>x</em>)&rang; the ensemble average path length required to isolate point <em>x</em>.
+where &lang;<em>h</em>(<em>x</em>)&rang; is the ensemble average path length required to isolate point <em>x</em>.
 Typically, scores < 0.5 indicate nothing unusual, while scores > 0.6 suggest an outlier.
 The significance of particular scores, however, depend upon the homogeneity of the bulk of the sample, which here will be dependent to some degree on the choice for the high-level features of the image.
 
 ## The Deep Convolution Neural Network
 
-Not long ago it would take a team of experts to engineer useful features for machine learning applications.
-Recently, however, deep convolution neural networks are made available via commercial products, or through academic repositories.
+Not long ago it might take a team of experts to engineer useful features for images to use in machine learning applications.
+Recently, however, deep convolution neural networks (DCNNs) have been created which generate strongly-relevant high-level features automatically; as a network is trained to classify images, weights for neurons in the final layers contain information about structure in images that best allow for discrimination between the classes.
+
+Today, a number of models are made available via commercial products, or through academic repositories.
 The [Caffe Project](http://caffe.berkeleyvision.org/) at U.C. Berkeley's Vision and Learning Center is a very fast deep learning framework, and specs for a variety of models are available through their [Model Zoo](http://caffe.berkeleyvision.org/model_zoo.html).
 We have obtained their BVLC Reference CaffeNet model&sup2; ("AlexNet"), with weights pre-trained on 1.2 million images from the ImageNet LSVRC-2010 data set.
 
+For our image anomaly framework, we insert re-sized images, with training image average pixel intensities subtracted, into the DCNN.
+Feature weights at the final three fully-connected layers ('fc6', 'fc7' and 'fc8') are extracted, and separately inserted into the Isolation Forest analyzer.
+Weights from the last of these layers corresponds to the 1000 probabilities assigned to each of the 1000 ImageNet classes; in this case they represent classes, rather than high-level features.
+Anomaly scores for each image are separately calculated using the 3 sets of weights. The images presented to the user are ranked according to 'fc7' scores.
 
 &sup2;[Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems, 2012](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf)
+
+## Results
+
+The following example illustrates the type of results obtained.
+In this case, images of 55 tigers, along with 3 leopards, 3 house cats, and an actual house were provided.
+
+<center>
+![Tigers and leopards and kitties, Oh My!](https://github.com/mw0/gcp/blob/master/presentation/tigersNstuff.png "Some of the tiger image set.")
+</center>
+
+Images intended as anomalous are indicated by elipses and a diamond.
+
+The 10 "most anomalous" images returned are shown below:
+
+<center>
+![Not Tigers, Oh My!](https://github.com/mw0/gcp/blob/master/presentation/tigerAnomRanked.png "Least tiger-like.")
+</center>
