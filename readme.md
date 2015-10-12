@@ -8,14 +8,16 @@
 
 ## Overview:
 
-In my former work as a research scientist I was always sought out anomalies; on a very good day they might point to a novel phenomenon, and later a quick publication. More typically, they served the important role of revealing errors in my code.  
+In my former work as a research scientist I always sought out anomalies; on a very good day they might point to a novel phenomenon, and later a quick publication. More typically, they served the important role of revealing errors in my code.  
   
-Now I ask the question of how to find anomalies automatically, using machine learning. I've long wanted to work with deep convolution neural networks (DCNNs), so images are a natural &mdash; but far from exhaustive &mdash; choice of subject matter. 
+Now I ask the question of how to find anomalies automatically, using machine learning. I've been very interested in deep convolution neural networks (DCNNs), so images make a natural &mdash; but far from exhaustive &mdash; choice of subject matter. 
 
 The [app linked here](http://www.rustytrephine.info "Try this App! ") shows examples of images that have been given anomaly scores indicating how much they differ from the overall collection of photos provided.
 To be more specific, a batch of images are fed into a deep convolution neural network (DCNN), and high-level feature weights are extracted from it. These in turn are fed into an Isolation Forest anomaly algorithm, and those images with the highest scores are displayed.
 
+<pre style="text-color: dark-red;">
 *It would be too easy to cherry pick results, so you also have the option of trying it out yourself with photos that you upload.*
+</pre>
 
 ## Outline:
 * <a href="#iForest">Isolation Forest</a>
