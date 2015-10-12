@@ -15,9 +15,9 @@ Now I ask the question of how to find anomalies automatically, using machine lea
 The [app linked here](http://www.rustytrephine.info "Try this App! ") shows examples of images that have been given anomaly scores indicating how much they differ from the overall collection of photos provided.
 To be more specific, a batch of images are fed into a deep convolution neural network (DCNN), and high-level feature weights are extracted from it. These in turn are fed into an Isolation Forest anomaly algorithm, and those images with the highest scores are displayed.
 
-<pre style="text-color: dark-red;">
+<p style="text-color: dark-red;">
 *It would be too easy to cherry pick results, so you also have the option of trying it out yourself with photos that you upload.*
-</pre>
+</p>
 
 ## Outline:
 * <a href="#iForest">Isolation Forest</a>
