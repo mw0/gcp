@@ -18,12 +18,13 @@ To be more specific, a batch of images are fed into a deep convolution neural ne
 *It would be too easy to cherry pick results, so you also have the option of trying it out yourself with photos that you upload.*
 
 ## Outline:
-* Isolation Forest
-* Deep Convolution Neural Network
-* Results
-* Future directions
+* <a href="#iForest">Isolation Forest</a>
+* <a href="DCNN">Deep Convolution Neural Network</a>
+* <a href="results">Results</a>
+* About the Code
+* Future Directions
 
-## Isolation Forest
+## <a name="iForest">Isolation Forest</a>
 
 Isolation Forest is a binary tree-based method for determining outliers due to [Lui, F.T. et al, \[2008\]](http://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/icdm08b.pdf?q=isolation).
 It works by constructing an ensemble of 'isolation trees' (iTrees), and computing average path lengths required to isolate points in feature space.
@@ -46,7 +47,7 @@ where &lang;<em>h</em>(<em>x</em>)&rang; is the ensemble average path length req
 Typically, scores < 0.5 indicate nothing unusual, while scores > 0.6 suggest an outlier.
 The significance of particular scores, however, depends upon the homogeneity of the bulk of the sample, which here will be dependent to some degree on the choice for the high-level features of the image.
 
-## The Deep Convolution Neural Network
+##  <a name="DCNN">The Deep Convolution Neural Network</a>
 
 Not long ago it might take a team of experts to engineer useful features from images to use in machine learning applications.
 Recently, deep convolution neural networks (DCNNs) have been created which generate strongly-relevant high-level features automatically.
@@ -64,7 +65,7 @@ Anomaly scores for each image are separately calculated using the 3 sets of weig
 
 &sup2;[Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems, 2012](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf)
 
-## Results
+## <a name="#results">Results</a>
 
 The following example illustrates the type of results obtained.
 In this case, images of 55 tigers, along with 3 leopards, 3 house cats, and an actual house were provided.
