@@ -2,6 +2,8 @@ import numpy as np
 import sklearn as sk
 import matplotlib.pyplot as plt
 import pandas as pd
+from numpy.random import normal
+import graphlab as gl
 
 
 def _h(i):
@@ -25,32 +27,23 @@ def _anomaly_score(score, n_samples):
     return 2**score
 
 
+@profile
 def _split_data(X):
     ''' split the data in the left and right nodes ''' 
     n_samples, n_columns = X.shape
     n_features = n_columns - 1
     m = M = 0
-
-    # Avoid attempting split on feature for which values are all equal
     while m == M:
         feature_id = np.random.randint(low=0, high=n_features)
         feature = X[:, feature_id]
         m = feature.min()
         M = feature.max()
-        # print m, M, feature_id, X.shape
-
-    # handle case of two identical values for selected feature
-    if n_samples == 2:
-        print "m: {0}, M: {1}".format(m, M)
+        #print(m, M, feature_id, X.shape)
 
     split_value = np.random.uniform(m, M, 1)
     lefties = feature <= split_value
-    if np.count_nonzero(lefties) == 0 or  np.count_nonzero(~lefties) == 0:
-        print "np.count_nonzero(lefties): {0}, np.count_nonzero(~lefties)".format(np.count_nonzero(lefties),  np.count_nonzero(~lefties))
     left_X = X[lefties]
     right_X = X[~lefties]
-
-    print "{0}, {1}".format(len(left_X), len(right_X))
     return left_X, right_X, feature_id, split_value
 
 
@@ -66,12 +59,10 @@ def iTree(X, add_index=False, max_depth = np.inf):
         n_features = n_columns - 1
 
         if count > max_depth:
-            # print "count > max_depth"
             for index in X[:,-1]:
                 n_split[index] = count
             return
 
-        print "\nn_samples: {0}".format(n_samples)
         if n_samples == 1:
             index = X[0, n_columns-1]
             n_split[index] = count
@@ -80,18 +71,15 @@ def iTree(X, add_index=False, max_depth = np.inf):
             lX, rX, feature_id, split_value = _split_data(X)
             # Uncomment the print to visualize a draft of 
             # the construction of the tree
-            print(lX[:,-1], rX[:,-1], feature_id, split_value, n_split, count)
+            print(lX[:,-1], rX[:,-1], feature_id, split_value, n_split)
             n_samples_lX, _ = lX.shape
             n_samples_rX, _ = rX.shape
             if n_samples_lX > 0:
                 iterate(lX, count+1)
-            if n_samples_rX > 0:
+            if n_samples_rX >0:
                 iterate(rX, count+1)
-            if n_samples_lX == 0 and n_samples_rX == 0:
-                return
 
     if add_index:
-        # print "add_index True"
         n_samples, _ = X.shape
         X = np.c_[X, range(n_samples)]
 
@@ -99,7 +87,7 @@ def iTree(X, add_index=False, max_depth = np.inf):
     return n_split
 
 
-class iForest():
+class iForestp():
     ''' Class to construct the isolation forest.
 
     -n_estimators: is the number of trees in the forest,
@@ -121,7 +109,6 @@ class iForest():
         self.max_depth = max_depth
         return
 
-
     def fit(self, X):
         print "Entering iForest.fit() ..."
         n_samples, n_features = X.shape
@@ -138,23 +125,76 @@ class iForest():
                        max_depth=self.max_depth) 
                  for i in range(self.n_estimators)]
 
-#       print "About to construct all them trees."
-#       trees = []
-#       for i in range(self.n_estimators):
-#           print ".",
-#           trees.append(iTree(X[np.random.choice(n_samples,
-#                                                 self.sample_size, 
-#                                                 replace=False)],
-#                              max_depth=self.max_depth))
-#       print ""
+#         trees = []
+#         for i in range(self.n_estimators):
+#             print ".",
+#             iTree(X[np.random.choice(n_samples,
+#                                      self.sample_size, 
+#                                      replace=False)],
+#                   max_depth=self.max_depth) 
+
+        print ""
 
         self.path_length_ = {k:None for k in range(n_samples)}
         for k in self.path_length_.keys():
             self.path_length_[k] = np.array([tree[k] 
                                              for tree in trees 
                                              if k in tree])
-
         self.path_length_ = np.array([self.path_length_[k].mean() for k in 
                                       self.path_length_.keys()])
         self.anomaly_score_ = _anomaly_score(self.path_length_, self.sample_size)
         return self
+
+if __name__ == '__main__':
+
+    import time
+    start = time.time()
+    WORKING_DIR = '/home/wilber/work/Galvanize/gcp-data/iForest/resize'
+    data = gl.image_analysis.load_images(WORKING_DIR, random_order=True)
+
+    time1 = time.time()
+    print time1 - start
+    data['image'] = gl.image_analysis.resize(data['image'], 256, 256)
+    totsecs = time.time() - start
+    hours = int(totsecs/3600)
+    mins = int((totsecs - 3600.*hours)/60)
+    secs = totsecs - 3600.*hours - 60.*mins
+
+    ETstrang = "Elapsed time = {0} hours, {1} minutes, {2} seconds"
+    print ETstrang.format(hours, mins, secs)
+
+    start = time.time()
+    pretrained_model = gl.load_model('http://s3.amazonaws.com/dato-datasets/deeplearning/imagenet_model_iter45')
+    time1 = time.time()
+    print time1 - start
+    data['extracted_features'] = pretrained_model.extract_features(data, 21)
+    totsecs = time.time() - start
+    print totsecs
+    hours = int(totsecs/3600)
+    mins = int((totsecs - 3600.*hours)/60)
+    secs = totsecs - 3600.*hours - 60.*mins
+
+    print ETstrang.format(hours, mins, secs)
+
+    X21 = np.array(data['extracted_features'])
+    print np.shape(X21)
+    X21[:5]
+
+    m21 = isof.iForest(n_estimators=10, max_depth=20)
+    start = time.time()
+    m21.fit(X21)
+    end = time.time()
+    print "elapsed time: {0}s.".format(end - start)
+
+    anom_scores = m22.anomaly_score_
+    sort_indices = np.argsort(anom_scores)
+
+    for i in range(1,16):
+        ind = sort_indices[-i]
+        print "{0}\t{1}\t{2}".format(i, names[ind], anom_scores[ind])
+
+    print "\n"
+    for i in range(1, 2000):
+        ind = sort_indices[-i]
+        if names[ind].startswith('fig'):
+            print "{0}\t{1}\t{2}".format(i, names[ind], anom_scores[ind])

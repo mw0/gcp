@@ -7,14 +7,17 @@ import iForest as isof
 import subprocess
 import numpy as np
 import time
+from collections import OrderedDict
 
 class AnomalyDetect(object):
     '''
-    Uses the Isolation Forest method to detect anomalies in photos (nominally).
+    Uses the Isolation Forest method to detect anomalies in photos.
     '''
 
+
     def __init__(self, show_calc_time = True, use_color = True,
-                 n_estimators = 200,
+                 n_estimators = 60,
+                 max_depth = 40,
                  src_dir = '/home/wilber/work/Galvanize/gcp-data/iForest/tmp',
                  proc_dir = '/home/wilber/work/Galvanize/gcp/app/static'):
 
@@ -30,6 +33,9 @@ class AnomalyDetect(object):
         self.n_estimators = n_estimators	# number of iTrees to construct
         self.show_calc_time = show_calc_time
         self.X = None
+        self.max_depth = max_depth
+        return
+
 
     def process_files(self, src_dir):
         '''
@@ -41,6 +47,10 @@ class AnomalyDetect(object):
         self.src_dir. Images are first made to be 100 x n or n x 100, for
         n >= 100, followed by cropping to 100 x 100. Extreme aspect ratio source
         images will have bad results!
+
+        !!! This is more-or-less obsolete, as the ImageNetFeaturizer class   !!!
+        !!! now will resize/stretch images to fit 256x256 pixels. Retaining  !!!
+        !!! this for cases when wish to apply iForest to raw pixels.	     !!!
         '''
 
         self.src_dir = src_dir
@@ -50,6 +60,10 @@ class AnomalyDetect(object):
         print "re-sizing images in {0} ".format(self.src_dir),
         self.proc_file_list = []
 
+        sizeFit = "100x100^"
+        sizeCrop = "100x100"
+#       sizeFit = "256x256^"
+#       sizeCrop = "256x256"
         if self.use_color:
             print "\nColor: True\n"
         else:
@@ -63,19 +77,18 @@ class AnomalyDetect(object):
             if self.use_color:
                 conv_comm = ["convert",
                              "{0}/{1}.{2}".format(self.src_dir, name, suffix),
-                             "-resize", "100x100^", "-set",
+                             "-resize", sizeFit, "-set",
                              # "-colorspace", "sRGB",  "-gravity",
                              "-colorspace", "RGB",
-                             "-gravity", "center", "-extent", "100x100",
+                             "-gravity", "center", "-extent", sizeCrop,
                              "{0}/{1}.png".format(self.proc_dir, name)]
-                pass
             else:
                 conv_comm = ["convert",
                              "{0}/{1}.{2}".format(self.src_dir, name, suffix),
                              "-channel", "RGBA", "-matte",
                              "-colorspace", "gray", 
-                             "-resize", "100x100^",
-                             "-gravity", "center", "-extent", "100x100",
+                             "-resize", sizeFit,
+                             "-gravity", "center", "-extent", sizeCrop,
                              "{0}/{1}.png".format(self.proc_dir, name)]
                 print " ".join(conv_comm)
             convert = subprocess.Popen(conv_comm, stdout=subprocess.PIPE,
@@ -89,9 +102,21 @@ class AnomalyDetect(object):
                 self.proc_file_list.append("{0}.png".format(name))
 
         print "\nlen(self.proc_file_list): {0}\n".format(len(self.proc_file_list))
+        return
+
 
     def load_files(self, proc_dir = None):
+        """
+        INPUT:
+            proc_dir	str, location of pre-processed files.
+            
+        OUTPUT: None
+        Takes 100x100 pixel images and loads them into self.X
 
+        !!! This is more-or-less obsolete, as the ImageNetFeaturizer class   !!!
+        !!! now will resize/stretch images to fit 256x256 pixels. Retaining  !!!
+        !!! this for cases when wish to apply iForest to raw pixels.	     !!!
+        """
         if proc_dir != None:
             self.proc_dir = proc_dir
 
@@ -127,25 +152,74 @@ class AnomalyDetect(object):
         print self.proc_file_list[:10]
 
         print "Exiting .load_files()."
+        return
 
 
-    def fit(self):
-        self.model = isof.iForest(n_estimators=self.n_estimators)
+    def fit(self, X = None):
+        """
+        INPUT:
+            X		X, n x p features variable. Will use values from
+			.load_files() step (in self.X), if not supplied here.
+        OUTPUT: None
+        With data in self.X, this calls the Isolation Forest model to obtain
+        anomaly scores.
+        """
+
+        if X != None:
+            self.X = X
+
+        self.iFmodel = isof.iForest(n_estimators=self.n_estimators,
+                                  max_depth=self.max_depth)
 
         if self.show_calc_time:
             print "Constructing iTrees ..."
             start = time.time()
 
-        self.model.fit(self.X)
+        self.iFmodel.fit(self.X)
 
         if self.show_calc_time:
             totsecs = time.time() - start
             mins = int(totsecs/60)
             secs = totsecs - 60.*mins
             print "Elapsed time = {0} minutes, {1} seconds".format(mins, secs)
+        return
 
 
-    def show_top_k(self, k, files_to_display=None):
+    def show_top_k(self, k):
+        '''
+        INPUT:
+            k			number of top anomaly scores to show
+        OUTPUT:
+            dict		key: file_order, value: (file_name, anom_score)
+        This is to accommodate kludge needed to interact with Flask.
+        '''
+
+        anom_scores = self.iFmodel.anomaly_score_
+        sort_indices = np.argsort(anom_scores)
+        print "\nk: {0}".format(k)
+        cryStr = "Only {0} anomaly scores returned by model. Cannot return {1}."
+        nScores = len(anom_scores)
+        if k > nScores:
+            print cryStr.format(nScores, k)
+            k = nScores
+        print ""
+
+#       print self.proc_file_list, "\n"
+#       print "# files in self.proc_file_list: {0}".format(len(self.proc_file_list))
+        top_k = OrderedDict()
+        for i in range(1, k + 1):
+            ind = sort_indices[-i]
+            print i, " ",
+            print sort_indices[-i], " ",
+            print self.proc_file_list[ind], " ",
+            print anom_scores[ind]
+            top_k[str(i)] =  (ind, self.proc_file_list[ind],
+                              anom_scores[ind])
+
+        return top_k
+
+
+    def show_top_k_ori(self, k, files_to_display=None):
         '''
         INPUT:
             k			number of top anomaly scores to show
@@ -156,7 +230,7 @@ class AnomalyDetect(object):
         List k files and anomaly scores in ranked order.
         '''
 
-        anom_scores = self.model.anomaly_score_
+        anom_scores = self.iFmodel.anomaly_score_
         sort_indices = np.argsort(anom_scores)
         print "\nk: {0}".format(k)
         cryStr = "Only {0} anomaly scores returned by model. Cannot return {1}."
@@ -166,13 +240,13 @@ class AnomalyDetect(object):
             k = nScores
         print ""
 
-        print self.proc_file_list, "\n"
-        print "# files in self.proc_file_list: {0}".format(len(self.proc_file_list))
+#       print self.proc_file_list, "\n"
+#       print "# files in self.proc_file_list: {0}".format(len(self.proc_file_list))
         top_k = []
         for i in range(1, k + 1):
             ind = sort_indices[-i]
             print i, " ",
-            print sort_indices[-i], " "
+            print sort_indices[-i], " ",
             print self.proc_file_list[ind], " ",
             print anom_scores[ind]
             top_k.append((str(i), self.proc_file_list[ind],
@@ -188,6 +262,7 @@ class AnomalyDetect(object):
                     my_files.append(((str(i), str(names[ind]),
                                      str(anom_scores[ind]))))
             return top_k, my_files
+
 
 if __name__ == '__main__':
     myModel = AnomalyDetect()

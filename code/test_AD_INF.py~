@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+import numpy as np
+import ImageNetFeaturizer as inf
+import AnomalyDetect as ad
+
+#source_directory = '/home/wilber/work/Galvanize/gcp-data/iForest/cat'
+#source_directory = '/home/wilber/work/caffe/examples/kitties/img'
+#source_directory = '/home/wilber/work/Galvanize/gcp-data/iForest/pizza'
+source_directory = '/home/wilber/work/Galvanize/gcp-data/iForest/tiger'
+#source_directory = '/home/wilber/work/Galvanize/gcp-data/iForest/loonie'
+#source_directory = '/home/wilber/work/Galvanize/gcp-data/iForest/suburban_homes'
+myINF = inf.ImageNetFeaturizer()
+myINF.preprocess_images(source_directory)
+#X = myINF.featurize(fc_level = 7)
+X = myINF.featurize(fc_level = 6)
+print np.shape(X)
+
+myAD = ad.AnomalyDetect()
+myAD.X = X
+myAD.proc_file_list = myINF.src_file_list
+myAD.fit()
+print myAD.iFmodel.anomaly_score_
+print ""
+myAD.show_top_k(10)
