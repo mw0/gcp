@@ -1,8 +1,10 @@
 import numpy as np
 import sklearn as sk
-import matplotlib.pyplot as plt
 import pandas as pd
 
+# Slightly modified version of code due to Donbeo:
+# http://stackoverflow.com/questions/30080491/isolation-forest-algorithm-in-python,
+# which is a port of FT Liu's R code: http://sourceforge.net/projects/iforest/
 
 def _h(i):
     return np.log(i) + 0.5772156649 
