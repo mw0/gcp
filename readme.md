@@ -57,7 +57,7 @@ Today, a number of models are made available via commercial products, or through
 The [Caffe Project](http://caffe.berkeleyvision.org/) at U.C. Berkeley's Vision and Learning Center is a very fast deep learning framework, and specs for a variety of models are available through their [Model Zoo](http://caffe.berkeleyvision.org/model_zoo.html).
 We have obtained their BVLC Reference CaffeNet model&sup2; ("AlexNet"), with weights pre-trained on 1.2 million images from the ImageNet LSVRC-2010 data set.
 
-For our image anomaly framework, we insert re-sized images into the DCNN, after subtracting average pixel intensities for the entire training set.
+For our image anomaly framework, we insert re-sized images into the DCNN, after subtracting pixel intensities average over the entire training set.
 Feature weights at the final three fully-connected layers ('fc6', 'fc7' and 'fc8') are extracted, and separately inserted into the Isolation Forest analyzer.
 For fc6 and fc7 there are 4096 feature weights.
 Weights from fc8 correspond to the 1000 probabilities assigned to each of the 1000 ImageNet classes; in this case they represent classes, rather than high-level features.
