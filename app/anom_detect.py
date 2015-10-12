@@ -10,6 +10,10 @@ from flask import Flask, render_template
 import flask
 from werkzeug import secure_filename
 
+# This replaces app.py, which attempted to use the ImageNetFeaturizer class.
+# Flask would not cooperate with that, and the current version inserts caffe
+# calls directly. This is not only uglier, unfortunately, but also has some
+# extra overhead. A fix is forthcoming, although a low-priority.
 
 # Make sure that caffe imagnet reference model has been fetched:
 
