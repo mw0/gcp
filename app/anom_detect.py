@@ -11,37 +11,40 @@ import flask
 from werkzeug import secure_filename
 
 
-caffe_root = '/home/wilber/work/caffe/'
-sys.path.insert(0, caffe_root + 'python')
-import caffe
-
 # Make sure that caffe imagnet reference model has been fetched:
-
-if not os.path.isfile(caffe_root + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'):
-    print("Downloading pre-trained CaffeNet model...")
-    shell_command = caffe_root + 'scripts/download_model_binary.py  ' \
-                    + caffe_root + 'models/bvlc_reference_caffenet'
-    subprocess.call(shell_command)
 
 app = Flask(__name__)
 
-#background_img = 'white256x256.png'
-background_img = 'white128x128.png'
-#background_img = 'white100x100.png'
+app.config.from_pyfile('../.config/settings.cfg')
 
-UPLOAD_FOLDER = '/home/wilber/work/Galvanize/gcp-data/iForest/tmp'
-PROCESSED_FOLDER = '/home/wilber/work/Galvanize/gcp/app/static'
-BCKGND_FOLDER = '/home/wilber/work/Galvanize/gcp-data/iForest/'
+if not os.path.isfile(app.config['CAFFE_ROOT']
+                      + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'):
+    print("Downloading pre-trained CaffeNet model...")
+    shell_command = app.config['CAFFE_ROOT'] \
+                    + 'scripts/download_model_binary.py  ' \
+                    + app.config['CAFFE_ROOT'] \
+                    + 'models/bvlc_reference_caffenet'
+    print "shell_command: ", shell_command
+    subprocess.call(shell_command)
+
+sys.path.insert(0, app.config['CAFFE_ROOT'] + 'python')
+import caffe
 
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['PROCESSED_FOLDER'] = PROCESSED_FOLDER
+# CAFFE_ROOT = '/home/wilber/work/caffe/'
+# BACKGROUND_IMG = 'white128x128.png'
+# UPLOAD_FOLDER = '/home/wilber/work/Galvanize/gcp-data/iForest/tmp'
+# VALIDATED_FOLDER = '/home/wilber/work/Galvanize/gcp/app/static'
+# BCKGND_FOLDER = '/home/wilber/work/Galvanize/gcp-data/iForest/'
 
-app.config['ALLOWED_EXTENSIONS'] = set(['PNG', 'JPG', 'JPEG',
-                                        'png', 'jpg', 'jpeg'])
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# app.config['VALIDATED_FOLDER'] = VALIDATED_FOLDER
+
+#app.config['ALLOWED_EXTENSIONS'] = set(['PNG', 'JPG', 'JPEG',
+#                                        'png', 'jpg', 'jpeg'])
 
 
-@app.route('/')
+@app.route('/', methods = ["GET", "POST"])
 def index():
     '''
     This is the welcome page. A simple messagge and a couple of buttons to
@@ -51,8 +54,8 @@ def index():
     return '''
     <html>
     <body>
-    <h2>Anomaly Detection Using Isolation Forest.</h2>
-    This application finds anomalies in images. It does this by feeding images through a pre-trained deep learning neural network&sup1;, extracting high-level feature weights, and constructing isolation trees&sup2; using those weights.
+    <h2>Anomaly Detection Using A Deep Convolution Neural Network and Isolation Forest.</h2>
+    This application finds anomalies in images. It does this by feeding images through a pre-trained, deep convolution neural network&sup1; extracting high-level feature weights; and constructing isolation trees&sup2; using those weights.
 
     <p>For more infomation on this, see the <a href="http://github.com/mw0/gcp">project description</a>.
 
@@ -60,7 +63,7 @@ def index():
     You can view anomaly scores computed for images we provide, or you can upload your own:
 
     <form action="/provided_images" method="POST">
-        <input type="submit" value="Use existing examples" disabled>
+        <input type="submit" value="View pre-processed examples"> (Coming soon.)
     </form>
     <form action="/upload_form" method="POST">
         <input type="submit" value="I have images to upload">
@@ -76,6 +79,41 @@ def index():
     '''
 
 
+@app.route('/provided_images', methods = ["GET", "POST"])
+def provided_images():
+    return '''
+    <html>
+    <body>
+    <h2>Provided Images</h2>
+    <p>&nbsp;</p>
+
+    Select an example of pre-processed images to see how their anomaly scores
+    turn out.
+
+    <form action="/mostly_tigers" method="POST">
+        <input type="submit" value="Mostly tigers, (Oh my!)">
+    </form> 
+    <form action="/mostly_homes" method="POST">
+        <input type="submit" value="Mostly homes" disabled>
+    </form> 
+    <form action="/yum_pizza" method="POST">
+        <input type="submit" value="Yum, pizza" disabled>
+    </form> 
+
+    <table>
+    <tr align="left"><th>i</th><th>File name</th><th>Status</th></tr>
+    '''
+
+@app.route('/mostly_tigers', methods = ["GET", "POST"])
+def mostly_tigers():
+    return render_template('MostlyTigers.html')
+
+
+@app.route('/anomalous_tigers', methods = ["GET", "POST"])
+def anomalous_tigers():
+    return render_template('AnomalousTigers.html')
+
+
 @app.route('/upload_form', methods = ["GET", "POST"])
 def upload_form():
     '''
@@ -84,7 +122,7 @@ def upload_form():
     '''
 
     # Clean out the upload folder before fetching new files.
-    os.system('rm {0}/*'.format(UPLOAD_FOLDER))
+    os.system('rm {0}/*'.format(app.config['UPLOAD_FOLDER']))
 
     return '''
     <html>
@@ -112,12 +150,13 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 
+
 @app.route('/upload_process', methods=["GET", "POST"])
 def upload_process():
 
     print "\nupload_process()\n"
 
-    ADmodel.src_file_list = []
+#   ADmodel.src_file_list = []
 #   ADmodel.proc_file_list = []
     retPage = '''
     <html>
@@ -135,7 +174,9 @@ def upload_process():
     <table>
     <tr align="left"><th>i</th><th>File name</th><th>Status</th></tr>
     '''
+    print "Requesting uploaded files list."
     uploaded_files = flask.request.files.getlist("file[]")
+    print "uploaded_files:\n", uploaded_files
     OKstr = "<tr><td>{0}</td><td>{1}</td><td>OK</td></tr>"
     sadStr = "<tr><td>{0}</td><td>{1}</td><td>Not&nbsp;permitted&nbsp;(ignored)</td></tr>"
     bad_guys = 0
@@ -151,22 +192,25 @@ def upload_process():
             retPage += sadStr.format(i + 1, file.filename.encode('utf-8', 'ignore'))
 
     # Clean up the folder to contain processed files, then move images there:
-    processed_list = os.listdir(PROCESSED_FOLDER)
+    processed_list = glob.glob(os.path.join(app.config['VALIDATED_FOLDER'], "*"))
+    print "processed_list:\n", processed_list
     processed_contents = [name for name in processed_list
                           if os.path.isfile(name)]
     print "processed_contents:\n", processed_contents
     processed_ct = len(processed_contents)
-    print "processed_ct: ", processed_ct
     if processed_ct > 0:
-        for ext in ALLOWED_EXTENSIONS:
-            print 'execute: rm -f {0}/*.{1}'.format(PROCESSED_FOLDER, ext)
-            os.system('rm -f {0}/*.{1}'.format(PROCESSED_FOLDER, ext))
+        for file in processed_contents:
+            os.remove(file)
 
-    print 'execute: mv {0}/* {1}'.format(UPLOAD_FOLDER, PROCESSED_FOLDER)
-    os.system('mv {0}/* {1}'.format(UPLOAD_FOLDER, PROCESSED_FOLDER))
+    print 'execute: mv {0}/* {1}'.format(app.config['UPLOAD_FOLDER'],
+                                         app.config['VALIDATED_FOLDER'])
+    os.system('mv {0}/* {1}'.format(app.config['UPLOAD_FOLDER'],
+                                    app.config['VALIDATED_FOLDER']))
 
     if bad_guys == 0:
         retPage += '<tr><td>&nbsp;</td><td align="center">All files ingested.</td><td>OK</td></tr>'
+    success_str = "<p>\nSucessfully uploaded {0} files.\n"
+    retPage += success_str.format(len(uploaded_files) - bad_guys)
     retPage += "</table>\n</body>\n</html>"
     return retPage
 
@@ -175,7 +219,7 @@ def upload_process():
 def display_images():
     print "\nAction selected: show images\n"
     path_files = [file for file in
-                  glob.glob(os.path.join(PROCESSED_FOLDER, "*"))
+                  glob.glob(os.path.join(app.config['VALIDATED_FOLDER'], "*"))
                   if allowed_file(file)]
     fileCt = len(path_files)
     print "file count: ", fileCt
@@ -185,10 +229,11 @@ def display_images():
 
     modulo8 = len(path_files) % 8
     if modulo8 != 0:
-        os.system('cp {0}/{1} {2}'.format(BCKGND_FOLDER, background_img,
-                                          PROCESSED_FOLDER))
-        
-        files += [background_img]*(8 - modulo8)
+        os.system('cp {0}/{1} {2}'.format(app.config['BCKGND_FOLDER'],
+                                          app.config['BACKGROUND_IMG'],
+                                          app.config['VALIDATED_FOLDER']))
+
+        files += [app.config['BACKGROUND_IMG']]*(8 - modulo8)
 #   print "\nfiles:", files
     files = [files[x:x+8] for x in xrange(0, len(files), 8)]
     return render_template('display_images.html', data = files)
@@ -200,21 +245,24 @@ def show_anomalies():
 
     # Before computing anomaly scores, remove white square that was used to
     # format the /display_images page:
-    os.system('rm -f {0}/{1}'.format(PROCESSED_FOLDER, background_img))
+    os.system('rm -f {0}/{1}'.format(app.config['VALIDATED_FOLDER'],
+                                     app.config['BACKGROUND_IMG']))
     #############
 
     caffe.set_device(0)
     caffe.set_mode_gpu()
 
-    net = caffe.Net(caffe_root \
+    net = caffe.Net(app.config['CAFFE_ROOT'] \
                     + 'models/bvlc_reference_caffenet/deploy.prototxt',
-                    caffe_root \
+                    app.config['CAFFE_ROOT'] \
                     + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel',
                     caffe.TEST)
 
     trans = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
     trans.set_transpose('data', (2,0,1))
-    trans.set_mean('data', np.load(caffe_root + 'python/caffe/imagenet/ilsvrc_2012_mean.npy').mean(1).mean(1)) # mean pixel
+    trans.set_mean('data', \
+                   np.load(app.config['CAFFE_ROOT'] \
+                           + 'python/caffe/imagenet/ilsvrc_2012_mean.npy').mean(1).mean(1)) # mean pixel
 
     # The reference model operates on images in [0,255] range instead of [0,1]:
     trans.set_raw_scale('data', 255)
@@ -222,11 +270,11 @@ def show_anomalies():
     # The reference model has channels in BGR order instead of RGB, so swap:
     trans.set_channel_swap('data', (2,1,0))
 
-    print "src_directory: {0}".format(PROCESSED_FOLDER)
+    print "src_directory: {0}".format(app.config['VALIDATED_FOLDER'])
 
-    path_files = glob.glob1(PROCESSED_FOLDER, "*")
+    path_files = glob.glob1(app.config['VALIDATED_FOLDER'], "*")
     print "path_files:\n", path_files
-    print "re-sizing images in {0} ".format(PROCESSED_FOLDER),
+    print "re-sizing images in {0} ".format(app.config['VALIDATED_FOLDER']),
 
     # --------------------------------------------------------------- #
     # Start by testing all files and seeing if they look like images: #
@@ -234,12 +282,14 @@ def show_anomalies():
 
     src_file_list = []
     ignored_files = []
+    print "app.config['VALIDATED_FOLDER']: ", app.config['VALIDATED_FOLDER']
     for i, file in enumerate(path_files):
         print "file: {0}".format(file)
         name = ".".join(file.split('.')[:-1])
         suffix = file.split('.')[-1]
         identify_comm = ["identify",
-                         "{0}/{1}.{2}".format(PROCESSED_FOLDER, name, suffix)]
+                         "{0}/{1}.{2}".format(app.config['VALIDATED_FOLDER'],
+                                              name, suffix)]
         identify = subprocess.Popen(identify_comm, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE)
         ident_message, ident_error = identify.communicate()
@@ -256,18 +306,18 @@ def show_anomalies():
     file_count = min([max_count, len(src_file_list)])
 
     print "file_count: ", file_count
-    print "Setting net.blobs['data'] shape ... "
-    print type(net.blobs['data'])
+#   print "Setting net.blobs['data'] shape ... "
+#   print type(net.blobs['data'])
     net.blobs['data'].reshape(file_count, 3, 227, 227)
         
-    print "net.blogs reshaped."
+#   print "net.blogs reshaped."
 
     # Do the ingest/pre-process:
     for i, myfile in enumerate(src_file_list):
         if i >= max_count:
             print "Hmmm. Thems a lot of files! Only doing the first 2048!"
             break
-        path_file = PROCESSED_FOLDER + '/' + myfile
+        path_file = app.config['VALIDATED_FOLDER'] + '/' + myfile
         print "{0}:\t{1}".format(i, path_file)
         net.blobs['data'].data[i] \
                       = trans.preprocess('data', caffe.io.load_image(path_file))
@@ -362,6 +412,8 @@ def show_anomalies():
         elif fc7_score > 0.75:
             print fc7_score, fc7_score - 0.75
             fc7_hex_str = '#ff' + str(hex(255 - int(1020.*(fc7_score - 0.75)))[-2:]*2)
+        scoreStr = "fc6_score: {0}, fc7_score: {1}, fc8_score: {2}"
+        print scoreStr.format(fc6_score, fc7_score, fc8_score)
         if fc8_score < 0.5:
             fc8_hex_str = '#b4b4b4'
         elif fc8_score >= 0.5 and fc8_score < 0.75:
@@ -397,6 +449,7 @@ if __name__ == '__main__':
 
 #   INFmodel = inf.ImageNetFeaturizer()
 
-    ADmodel = ad.AnomalyDetect(use_color=True, max_depth=75)
+#   ADmodel = ad.AnomalyDetect(use_color=True, max_depth=75)
+    ADmodel = ad.AnomalyDetect(use_color=True, max_depth=85, n_estimators = 200)
 
-    app.run(host='0.0.0.0', port=8080, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=80, debug=True, threaded=True)

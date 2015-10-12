@@ -79,4 +79,4 @@ The 10 "most anomalous" images returned are shown below:
 ![Not Tigers, Oh My!](https://github.com/mw0/gcp/blob/master/presentation/tigerAnomRanked.png "Least tiger-like.")
 </center>
 
-It is easy to see that these "most anomalous" include all three house cats, the three leopards, and the house.
+It is easy to see that these "most anomalous" include two of the three house cats, the three leopards, and the house.
