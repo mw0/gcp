@@ -19,8 +19,8 @@ To be more specific, a batch of images are fed into a deep convolution neural ne
 
 ## Outline:
 * <a href="#iForest">Isolation Forest</a>
-* <a href="DCNN">Deep Convolution Neural Network</a>
-* <a href="results">Results</a>
+* <a href="#DCNN">Deep Convolution Neural Network</a>
+* <a href="#results">Results</a>
 * About the Code
 * Future Directions
 
