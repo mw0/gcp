@@ -6,8 +6,9 @@ import pandas as pd
 # http://stackoverflow.com/questions/30080491/isolation-forest-algorithm-in-python,
 # which is a port of FT Liu's R code: http://sourceforge.net/projects/iforest/
 
+
 def _h(i):
-    return np.log(i) + 0.5772156649 
+    return np.log(i) + 0.5772156649
 
 
 def _c(n):
@@ -28,7 +29,7 @@ def _anomaly_score(score, n_samples):
 
 
 def _split_data(X):
-    ''' split the data in the left and right nodes ''' 
+    ''' split the data in the left and right nodes '''
     n_samples, n_columns = X.shape
     n_features = n_columns - 1
     m = M = 0
@@ -47,8 +48,10 @@ def _split_data(X):
 
     split_value = np.random.uniform(m, M, 1)
     lefties = feature <= split_value
-    if np.count_nonzero(lefties) == 0 or  np.count_nonzero(~lefties) == 0:
-        print "np.count_nonzero(lefties): {0}, np.count_nonzero(~lefties)".format(np.count_nonzero(lefties),  np.count_nonzero(~lefties))
+    if np.count_nonzero(lefties) == 0 or np.count_nonzero(~lefties) == 0:
+        ctStrang = "np.count_nonzero(lefties): {0}, np.count_nonzero(~lefties)"
+        print ctStrang.format(np.count_nonzero(lefties),
+                              np.count_nonzero(~lefties))
     left_X = X[lefties]
     right_X = X[~lefties]
 
@@ -56,20 +59,21 @@ def _split_data(X):
     return left_X, right_X, feature_id, split_value
 
 
-def iTree(X, add_index=False, max_depth = np.inf):            
+def iTree(X, add_index=False, max_depth=np.inf):
     ''' construct an isolation tree and returns the number of steps required
-    to isolate an element. A column of index is added to the input matrix X if  
-    add_index=True. This column is required in the algorithm. ''' 
+    to isolate an element. A column of index is added to the input matrix X if
+    add_index=True. This column is required in the algorithm. '''
 
-    n_split = {} 
-    def iterate(X, count = 0):
+    n_split = {}
+
+    def iterate(X, count=0):
 
         n_samples, n_columns = X.shape
         n_features = n_columns - 1
 
         if count > max_depth:
             # print "count > max_depth"
-            for index in X[:,-1]:
+            for index in X[:, -1]:
                 n_split[index] = count
             return
 
@@ -77,12 +81,13 @@ def iTree(X, add_index=False, max_depth = np.inf):
         if n_samples == 1:
             index = X[0, n_columns-1]
             n_split[index] = count
-            return 
+            return
         else:
             lX, rX, feature_id, split_value = _split_data(X)
-            # Uncomment the print to visualize a draft of 
+            # Uncomment the print to visualize a draft of
             # the construction of the tree
-            # print(lX[:,-1], rX[:,-1], feature_id, split_value, n_split, count)
+            # print(lX[:,-1], rX[:,-1], feature_id, split_value,
+            #       n_split, count)
             n_samples_lX, _ = lX.shape
             n_samples_rX, _ = rX.shape
             if n_samples_lX > 0:
@@ -104,40 +109,39 @@ def iTree(X, add_index=False, max_depth = np.inf):
 class iForest():
     ''' Class to construct the isolation forest.
 
-    -n_estimators: is the number of trees in the forest,
+    -n_estimators:	is the number of trees in the forest,
 
-    -sample_size: is the bootstrap parameter used during the construction
-    of the forest,
+    -sample_size:	is the bootstrap parameter used during the
+                        construction of the forest
 
-    -add_index: adds a column of index to the matrix X. This is required and 
-    add_index can be set to False only if the last column of X contains 
-    already indices.
+    -add_index:		adds a column of index to the matrix X. This is
+                        required and add_index can be set to False only if the
+                        last column of X contains already indices.
 
     -max_depth: is the maximum depth of each tree
     '''
-    def __init__(self, n_estimators=20, sample_size=None, add_index = True, 
-                 max_depth = 100):
+    def __init__(self, n_estimators=20, sample_size=None, add_index=True,
+                 max_depth=100):
         self.n_estimators = n_estimators
         self.sample_size = sample_size
         self.add_index = add_index
         self.max_depth = max_depth
         return
 
-
     def fit(self, X):
         print "Entering iForest.fit() ..."
         n_samples, n_features = X.shape
-        if self.sample_size == None:
+        # if self.sample_size == None:
+        if self.sample_size is None:
             self.sample_size = int(n_samples/2)
 
         if self.add_index:
             X = np.c_[X, range(n_samples)]
 
-
-        trees = [iTree(X[np.random.choice(n_samples, 
-                                          self.sample_size, 
+        trees = [iTree(X[np.random.choice(n_samples,
+                                          self.sample_size,
                                           replace=False)],
-                       max_depth=self.max_depth) 
+                       max_depth=self.max_depth)
                  for i in range(self.n_estimators)]
 
 #       print "About to construct all them trees."
@@ -145,18 +149,19 @@ class iForest():
 #       for i in range(self.n_estimators):
 #           print ".",
 #           trees.append(iTree(X[np.random.choice(n_samples,
-#                                                 self.sample_size, 
+#                                                 self.sample_size,
 #                                                 replace=False)],
 #                              max_depth=self.max_depth))
 #       print ""
 
-        self.path_length_ = {k:None for k in range(n_samples)}
+        self.path_length_ = {k: None for k in range(n_samples)}
         for k in self.path_length_.keys():
-            self.path_length_[k] = np.array([tree[k] 
-                                             for tree in trees 
+            self.path_length_[k] = np.array([tree[k]
+                                             for tree in trees
                                              if k in tree])
 
-        self.path_length_ = np.array([self.path_length_[k].mean() for k in 
+        self.path_length_ = np.array([self.path_length_[k].mean() for k in
                                       self.path_length_.keys()])
-        self.anomaly_score_ = _anomaly_score(self.path_length_, self.sample_size)
+        self.anomaly_score_ = _anomaly_score(self.path_length_,
+                                             self.sample_size)
         return self

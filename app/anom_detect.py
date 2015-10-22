@@ -67,7 +67,7 @@ def index():
     You can view anomaly scores computed for images we provide, or you can upload your own:
 
     <form action="/provided_images" method="POST">
-        <input type="submit" value="View pre-processed examples"> (Coming soon.)
+        <input type="submit" value="View pre-processed examples">
     </form>
     <form action="/upload_form" method="POST">
         <input type="submit" value="I have images to upload">
@@ -89,10 +89,10 @@ def provided_images():
     <html>
     <body>
     <h2>Provided Images</h2>
-    <p>&nbsp;</p>
 
     Select an example of pre-processed images to see how their anomaly scores
     turn out.
+    <p>&nbsp;</p>
 
     <form action="/mostly_tigers" method="POST">
         <input type="submit" value="Mostly tigers, (Oh my!)">
@@ -103,9 +103,8 @@ def provided_images():
     <form action="/yum_pizza" method="POST">
         <input type="submit" value="Yum, pizza" disabled>
     </form> 
-
-    <table>
-    <tr align="left"><th>i</th><th>File name</th><th>Status</th></tr>
+    </body>
+    </html>
     '''
 
 @app.route('/mostly_tigers', methods = ["GET", "POST"])

@@ -9,19 +9,20 @@ import glob
 
 # Make sure that caffe is in the python path:
 
-caffe_root = '/home/wilber/work/caffe/'
-sys.path.insert(0, caffe_root + 'python')
-
 import os
 import caffe
 
+caffe_root = '/home/wilber/work/caffe/'
+sys.path.insert(0, caffe_root + 'python')
+
+
 class ImageNetFeaturizer(object):
     """
-    Processes images through CaffeNet's pre-trained reference model, and returns
-    an array of high-level feature weights.
+    Processes images through CaffeNet's pre-trained reference model, and
+    returns an array of high-level feature weights.
 
-    o User provides a directory to .preprocess_images() and images are re-scaled
-      and stretched to fit into a 256x256 pixel array.
+    o User provides a directory to .preprocess_images() and images are
+      re-scaled and stretched to fit into a 256x256 pixel array.
 
     o A call to .featurize() returns array of feature weights for each of the
       images.
@@ -33,8 +34,8 @@ class ImageNetFeaturizer(object):
         """
         self.X = None			# n x 4096 ndarray of feature weights
         self.src_dir = None		# location of images to be processed
-        self.src_file_list = None	# list of str, usable files in src_dir
-        self.ignored_files = None	# Files not identifiable, ignored
+        self.src_file_list = None       # list of str, usable files in src_dir
+        self.ignored_files = None       # Files not identifiable, ignored
         self.net = None			# The caffe model itself
         self.trans = None		# caffe's image transformation object
         print caffe_root
@@ -43,36 +44,42 @@ class ImageNetFeaturizer(object):
         caffe.set_device(0)
         caffe.set_mode_gpu()
 
-        self.net = caffe.Net(caffe_root \
-                             + 'models/bvlc_reference_caffenet/deploy.prototxt',
-                             caffe_root \
-                             + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel',
+        self.net = caffe.Net(caffe_root +
+                             'models/bvlc_reference_caffenet/'
+                             'deploy.prototxt',
+                             caffe_root +
+                             'models/bvlc_reference_caffenet/'
+                             'bvlc_reference_caffenet.caffemodel',
                              caffe.TEST)
 
         # Input preprocessing: 'data' is the name of the
         # input blob == net.inputs[0]
-        self.trans = caffe.io.Transformer({'data': self.net.blobs['data'].data.shape})
-        self.trans.set_transpose('data', (2,0,1))
-        self.trans.set_mean('data', np.load(caffe_root
-                                            + 'python/caffe/imagenet/ilsvrc_2012_mean.npy').mean(1).mean(1)) # mean pixel
+        self.trans = caffe.io.Transformer({'data':
+                                           self.net.blobs['data'].data.shape})
+        self.trans.set_transpose('data', (2, 0, 1))
+        # Obtain mean pixel values:
+        self.trans.set_mean('data',
+                            np.load(caffe_root +
+                                    'python/caffe/imagenet/'
+                                    'ilsvrc_2012_mean.npy').mean(1).mean(1))
 
         # The reference model operates on images in [0,255] range instead
         # of [0,1]:
         self.trans.set_raw_scale('data', 255)
 
-        # The reference model has channels in BGR order instead of RGB, so swap:
-        self.trans.set_channel_swap('data', (2,1,0))
+        # The reference model has channels in BGR order instead of RGB,
+        # so swap:
+        self.trans.set_channel_swap('data', (2, 1, 0))
         return
-
 
     def preprocess_images(self, src_directory):
         """
         INPUT:
             src_directory	str, location of directory in which source
-				images are located.
+                                images are located.
         OUTPUT:
             status_string	one of
-				['OK', 'Cannot process all images; limit 120']
+                                ['OK', 'Cannot process all images; limit 120']
         Calls caffe.Net.reshape() to re-scale images.
         """
 
@@ -106,7 +113,6 @@ class ImageNetFeaturizer(object):
             else:
                 self.src_file_list.append("{0}.{1}".format(name, suffix))
 
-
         # set net to batch size of file count (maximimum size of 128):
         max_count = 128
         file_count = min([max_count, len(self.src_file_list)])
@@ -114,27 +120,28 @@ class ImageNetFeaturizer(object):
         print "Setting net.blobs['data'] shape ... "
         print type(self.net.blobs['data'])
         self.net.blobs['data'].reshape(file_count, 3, 227, 227)
-        
+
         print "net.blogs reshaped."
 
         # Do the ingest/pre-process:
+        complaintStr = 'Cannot process all images; limit {0}'
         for i, myfile in enumerate(self.src_file_list):
             if i >= max_count:
-                status_string = 'Cannot process all images; limit {0}'.format(max_count)
+                status_string = complaintStr.format(max_count)
                 break
             path_file = self.src_dir + '/' + myfile
             print "{0}:\t{1}".format(i, path_file)
-            self.net.blobs['data'].data[i] \
-              = self.trans.preprocess('data', caffe.io.load_image(path_file))
+            self.net.blobs['data'].data[i] =
+            self.trans.preprocess('data', caffe.io.load_image(path_file))
 
         return status_string
 
-    def featurize(self, fc_level = 7):
+    def featurize(self, fc_level=7):
         """
         INPUT:
             fc_level	int, level at which to extract features, one of
-			[6, 7, 8]; default: 7. * Note that fc_level = 8 returns
-			an array with np.shape()[1] = 1000, rather than 4096! *
+                        [6, 7, 8]; default: 7. * Note that fc_level = 8 returns
+                        an array with np.shape()[1] = 1000, rather than 4096! *
         OUTPUT:
             X	ndarray(n_images, 4096) containing high-level feature weights
         Returns array containing weights of high-level features for all
@@ -156,7 +163,7 @@ class ImageNetFeaturizer(object):
             self.X = np.full((len(self.src_file_list), 1000), np.nan)
         else:
             self.X = np.full((len(self.src_file_list), 4096), np.nan)
-        
+
         for i in range(len(self.src_file_list)):
             self.X[i] = self.net.blobs[fc_str].data[i]
 
@@ -176,15 +183,17 @@ if __name__ == "__main__":
 
     # Make sure that caffe imagnet reference model has been fetched:
 
-    if not os.path.isfile(caffe_root + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'):
+    modelPath = 'models/bvlc_reference_caffenet/' \
+                + 'bvlc_reference_caffenet.caffemodel'
+    if not os.path.isfile(caffe_root + modelPath):
         print("Downloading pre-trained CaffeNet model...")
-        shell_command = caffe_root + 'scripts/download_model_binary.py  ' \
-                        + caffe_root + 'models/bvlc_reference_caffenet'
+        shell_command = (caffe_root + 'scripts/download_model_binary.py  ' +
+                         caffe_root + 'models/bvlc_reference_caffenet')
         subprocess.call(shell_command)
 
     myINF = ImageNetFeaturizer()
     myINF.preprocess_images(source_directory)
-    X = myINF.featurize(fc_level = 7)
+    X = myINF.featurize(fc_level=7)
     print np.shape(X)
     plt.plot(X[0])
     plt.plot(X[1])
