@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+    <header>
+      <div class="container">
+        <h2>Most Anomalous 'Tigers'</h2>
+      </div>
+      </header>
+  <div>
+
+        <p>&nbsp;</p>
+        <ul>
+            <li>The algorithm successfully picked out the most
+	        obvious candidates (leopards, house cats and the house)
+	    <li>The rankings might not match our intuition.
+	    <li>Note that there is more to most images than the absence/presence of a feline or house. The house, for example has grass and trees, which are also present in a large fraction of the tiger images. Two of the 'anomalous' tigers are on white or snow backgrounds. This information is encoded in the high-level features extracted from the neural network.
+	    <li>Isolation Forest relies on randomness, so each time it is done there are small variations in the scores. This will affect the ordering of the results displayed.
+        </ul>
+        <p>&nbsp;</p>
+        <form action="/" method="POST">
+        <input type="submit" value="So much fun! Start all over.">
+	</form>
+        <p>&nbsp;</p>
+        <table border="1px solid black" style="width:300px">
+	    <tbody><tr><th>fc7&nbsp;rank</th><th>image</th><th>fc6&nbsp;score</th>
+	        <th>fc7&nbsp;score</th><th>fc8&nbsp;score</th>
+	        <td>&nbsp;</td>
+	        <th>fc7&nbsp;rank</th><th>image</th><th>fc6&nbsp;score</th>
+	        <th>fc7&nbsp;score</th><th>fc8&nbsp;score</th>
+	    </tr>
+        
+            <tr><td align="center">0</td><td><img src="static/AnomalousTigers_files/house.jpg" style="width:128px;height:128px;"></td><td bgcolor="#c0b4b4">0.54</td><td bgcolor="#c0b4b4">0.53</td><td bgcolor="#c0b4b4">0.64</td>
+            <td>&nbsp;</td>
+	        <td align="center">1</td><td><img src="static/AnomalousTigers_files/0b5f14018c6686b9178e602715f0f7a9.jpg" style="width:128px;height:128px;"></td><td bgcolor="#beb4b4">0.54</td><td bgcolor="#beb4b4">0.53</td><td bgcolor="#beb4b4">0.61</td>
+            </tr>
+        
+            <tr><td align="center">2</td><td><img src="static/AnomalousTigers_files/lead_large.jpg" style="width:128px;height:128px;"></td><td bgcolor="#b4b4b4">0.50</td><td bgcolor="#b4b4b4">0.52</td><td bgcolor="#b4b4b4">0.60</td>
+            <td>&nbsp;</td>
+	        <td align="center">3</td><td><img src="static/AnomalousTigers_files/114240651_cat_342943c.jpg" style="width:128px;height:128px;"></td><td bgcolor="#b4b4b4">0.50</td><td bgcolor="#b4b4b4">0.52</td><td bgcolor="#b4b4b4">0.59</td>
+            </tr>
+        
+            <tr><td align="center">4</td><td><img src="static/AnomalousTigers_files/tiger_PNG545.png" style="width:128px;height:128px;"></td><td bgcolor="#b4b4b4">0.49</td><td bgcolor="#b4b4b4">0.50</td><td bgcolor="#b4b4b4">0.59</td>
+            <td>&nbsp;</td>
+	        <td align="center">5</td><td><img src="static/AnomalousTigers_files/Namibie_Etosha_Leopard_01edit.jpg" style="width:128px;height:128px;"></td><td bgcolor="#b4b4b4">0.47</td><td bgcolor="#b4b4b4">0.49</td><td bgcolor="#b4b4b4">0.59</td>
+            </tr>
+        
+            <tr><td align="center">6</td><td><img src="static/AnomalousTigers_files/P.t.altaica_Tomak_Male.jpg" style="width:128px;height:128px;"></td><td bgcolor="#b4b4b4">0.46</td><td bgcolor="#b4b4b4">0.48</td><td bgcolor="#b4b4b4">0.58</td>
+            <td>&nbsp;</td>
+	        <td align="center">7</td><td><img src="static/AnomalousTigers_files/leopard-07.jpg" style="width:128px;height:128px;"></td><td bgcolor="#b4b4b4">0.45</td><td bgcolor="#b4b4b4">0.48</td><td bgcolor="#b4b4b4">0.58</td>
+            </tr>
+        
+            <tr><td align="center">8</td><td><img src="static/AnomalousTigers_files/White_Tiger_6_3865790598.jpg" style="width:128px;height:128px;"></td><td bgcolor="#b4b4b4">0.45</td><td bgcolor="#b4b4b4">0.47</td><td bgcolor="#b4b4b4">0.57</td>
+            <td>&nbsp;</td>
+	        <td align="center">9</td><td><img src="static/AnomalousTigers_files/Sumatran-Tiger-Hero.jpg" style="width:128px;height:128px;"></td><td bgcolor="#b4b4b4">0.45</td><td bgcolor="#b4b4b4">0.47</td><td bgcolor="#b4b4b4">0.57</td>
+            </tr>
+        
+        </tbody></table>
+    
+</form>
+  </div>
+{% endblock %}
+
+
