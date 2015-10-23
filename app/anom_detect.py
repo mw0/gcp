@@ -21,13 +21,15 @@ app = Flask(__name__)
 
 app.config.from_pyfile('../.config/settings.cfg')
 
-if not os.path.isfile(app.config['CAFFE_ROOT']
-                      + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'):
+cpath = app.config['CAFFE_ROOT']
+cpath += 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel'
+
+if not os.path.isfile(cpath):
     print("Downloading pre-trained CaffeNet model...")
-    shell_command = app.config['CAFFE_ROOT'] \
-                    + 'scripts/download_model_binary.py  ' \
-                    + app.config['CAFFE_ROOT'] \
-                    + 'models/bvlc_reference_caffenet'
+    shell_command = (app.config['CAFFE_ROOT'] +
+                     'scripts/download_model_binary.py  ' +
+                     app.config['CAFFE_ROOT'] +
+                     'models/bvlc_reference_caffenet')
     print "shell_command: ", shell_command
     subprocess.call(shell_command)
 
@@ -44,80 +46,36 @@ import caffe
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # app.config['VALIDATED_FOLDER'] = VALIDATED_FOLDER
 
-#app.config['ALLOWED_EXTENSIONS'] = set(['PNG', 'JPG', 'JPEG',
-#                                        'png', 'jpg', 'jpeg'])
+# app.config['ALLOWED_EXTENSIONS'] = set(['PNG', 'JPG', 'JPEG',
+#                                         'png', 'jpg', 'jpeg'])
 
 
-@app.route('/', methods = ["GET", "POST"])
+@app.route('/', methods=["GET", "POST"])
 def index():
     '''
     This is the welcome page. A simple messagge and a couple of buttons to
     push to get started.
     '''
 
-    return '''
-    <html>
-    <body>
-    <h2>Anomaly Detection Using A Deep Convolution Neural Network and Isolation Forest.</h2>
-    This application finds anomalies in images. It does this by feeding images through a pre-trained, deep convolution neural network&sup1; extracting high-level feature weights; and constructing isolation trees&sup2; using those weights.
-
-    <p>For more infomation on this, see the <a href="http://github.com/mw0/gcp">project description</a>.
-
-    <p>
-    You can view anomaly scores computed for images we provide, or you can upload your own:
-
-    <form action="/provided_images" method="POST">
-        <input type="submit" value="View pre-processed examples">
-    </form>
-    <form action="/upload_form" method="POST">
-        <input type="submit" value="I have images to upload">
-    </form>
-    </p>
-
-    <p>&nbsp;</p><p class="footnote">
-    &sup1;<a href="http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf">Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems. 2012</a>.<br>
-    &sup2;<a href="http://dx.doi.org/10.1109/ICDM.2008.17">Liu, F.T., K. M. Ting and Z.-H. Zhou, <em>Isolation Forest</em>, Eighth IEEE International Conference on Data Mining, 2008, ICDM 08., p413., 2008.</a><br>
-    </p>
-    </body>
-    </html>
-    '''
+    return render_template('home.html')
 
 
-@app.route('/provided_images', methods = ["GET", "POST"])
+@app.route('/provided_images', methods=["GET", "POST"])
 def provided_images():
-    return '''
-    <html>
-    <body>
-    <h2>Provided Images</h2>
+    return render_template('Pre-processedResults.html')
 
-    Select an example of pre-processed images to see how their anomaly scores
-    turn out.
-    <p>&nbsp;</p>
 
-    <form action="/mostly_tigers" method="POST">
-        <input type="submit" value="Mostly tigers, (Oh my!)">
-    </form> 
-    <form action="/mostly_homes" method="POST">
-        <input type="submit" value="Mostly homes" disabled>
-    </form> 
-    <form action="/yum_pizza" method="POST">
-        <input type="submit" value="Yum, pizza" disabled>
-    </form> 
-    </body>
-    </html>
-    '''
-
-@app.route('/mostly_tigers', methods = ["GET", "POST"])
+@app.route('/mostly_tigers', methods=["GET", "POST"])
 def mostly_tigers():
     return render_template('MostlyTigers.html')
 
 
-@app.route('/anomalous_tigers', methods = ["GET", "POST"])
+@app.route('/anomalous_tigers', methods=["GET", "POST"])
 def anomalous_tigers():
     return render_template('AnomalousTigers.html')
 
 
-@app.route('/upload_form', methods = ["GET", "POST"])
+@app.route('/upload_form', methods=["GET", "POST"])
 def upload_form():
     '''
     A simple form permitting users to select a local directory, and files
@@ -127,24 +85,7 @@ def upload_form():
     # Clean out the upload folder before fetching new files.
     os.system('rm {0}/*'.format(app.config['UPLOAD_FOLDER']))
 
-    return '''
-    <html>
-    <body>
-    <h2>Upload Your Files</h2>
-    Each time you upload files, previous uploads will be removed from the server.
-    <p>
-    Images in formats other than PNG and JPEG will be ignored.
-    <p>
-    <table>
-    <tr><td>
-            <form method="POST" enctype="multipart/form-data" action="/upload_process">
-                <input type="file" name="file[]" multiple="">
-                <input type="submit" value="Upload">
-            </form>
-        </td>
-    </tr>
-    </table>
-    '''
+    return render_template('UploadFiles.html')
 
 
 # For a given file, return whether it's an allowed type or not
@@ -153,49 +94,31 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 
-
 @app.route('/upload_process', methods=["GET", "POST"])
 def upload_process():
 
     print "\nupload_process()\n"
 
-#   ADmodel.src_file_list = []
-#   ADmodel.proc_file_list = []
-    retPage = '''
-    <html>
-    <body>
-    <h2>Uploading Your Files</h2>
-    <p>&nbsp;</p>
-
-    <form action="/display_images" method="POST">
-        <input type="submit" value="Display Images">
-    </form> 
-    <form action="/show_anomalies" method="POST">
-        <input type="submit" value="Show Anomalies">
-    </form> 
-
-    <table>
-    <tr align="left"><th>i</th><th>File name</th><th>Status</th></tr>
-    '''
     print "Requesting uploaded files list."
     uploaded_files = flask.request.files.getlist("file[]")
     print "uploaded_files:\n", uploaded_files
-    OKstr = "<tr><td>{0}</td><td>{1}</td><td>OK</td></tr>"
-    sadStr = "<tr><td>{0}</td><td>{1}</td><td>Not&nbsp;permitted&nbsp;(ignored)</td></tr>"
+
     bad_guys = 0
+    bad_list = []
     for i, file in enumerate(uploaded_files):
-#       print file.filename.encode('utf-8', 'ignore')
+        # print file.filename.encode('utf-8', 'ignore')
         print file.filename.encode('utf-8')
         if allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#           retPage += OKstr.format(i + 1, file.filename.encode('utf-8', 'ignore'))
         else:
             bad_guys += 1
-            retPage += sadStr.format(i + 1, file.filename.encode('utf-8', 'ignore'))
-
+            bad_list.append([str(i + 1),
+                             file.filename.encode('utf-8', 'ignore'),
+                             'Not&nbsp;permitted&nbsp;(ignored)'])
     # Clean up the folder to contain processed files, then move images there:
-    processed_list = glob.glob(os.path.join(app.config['VALIDATED_FOLDER'], "*"))
+    shorter = app.config['VALIDATED_FOLDER']
+    processed_list = glob.glob(os.path.join(shorter, "*"))
     print "processed_list:\n", processed_list
     processed_contents = [name for name in processed_list
                           if os.path.isfile(name)]
@@ -211,11 +134,12 @@ def upload_process():
                                     app.config['VALIDATED_FOLDER']))
 
     if bad_guys == 0:
-        retPage += '<tr><td>&nbsp;</td><td align="center">All files ingested.</td><td>OK</td></tr>'
-    success_str = "<p>\nSucessfully uploaded {0} files.\n"
-    retPage += success_str.format(len(uploaded_files) - bad_guys)
-    retPage += "</table>\n</body>\n</html>"
-    return retPage
+        bad_list.append([' ', 'All files ingested.', 'OK'])
+    success_str = "Sucessfully uploaded {0} files."
+
+    data = [bad_list, success_str.format(len(uploaded_files) - bad_guys)]
+
+    return render_template('UploadProcess.html', data=data)
 
 
 @app.route('/display_images', methods=["GET", "POST"])
@@ -239,7 +163,7 @@ def display_images():
         files += [app.config['BACKGROUND_IMG']]*(8 - modulo8)
 #   print "\nfiles:", files
     files = [files[x:x+8] for x in xrange(0, len(files), 8)]
-    return render_template('display_images.html', data = files)
+    return render_template('display_images.html', data=files)
 
 
 @app.route('/show_anomalies', methods=["GET", "POST"])
@@ -255,28 +179,32 @@ def show_anomalies():
     caffe.set_device(0)
     caffe.set_mode_gpu()
 
-    net = caffe.Net(app.config['CAFFE_ROOT'] \
-                    + 'models/bvlc_reference_caffenet/deploy.prototxt',
-                    app.config['CAFFE_ROOT'] \
-                    + 'models/bvlc_reference_caffenet/bvlc_reference_caffenet.caffemodel',
-                    caffe.TEST)
+    cpath0 = (app.config['CAFFE_ROOT'] +
+              'models/bvlc_reference_caffenet/deploy.prototxt')
+    cpath1 = (app.config['CAFFE_ROOT'] +
+              'models/bvlc_reference_caffenet/' +
+              'bvlc_reference_caffenet.caffemodel')
+    net = caffe.Net(cpath0, cpath1, caffe.TEST)
+
+    t0 = time.time()
 
     trans = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
-    trans.set_transpose('data', (2,0,1))
-    trans.set_mean('data', \
-                   np.load(app.config['CAFFE_ROOT'] \
-                           + 'python/caffe/imagenet/ilsvrc_2012_mean.npy').mean(1).mean(1)) # mean pixel
+    trans.set_transpose('data', (2, 0, 1))
+    shorter = app.config['CAFFE_ROOT']
+    shorter += 'python/caffe/imagenet/ilsvrc_2012_mean.npy'
+    trans.set_mean('data', np.load(shorter).mean(1).mean(1))  # mean pixel
 
     # The reference model operates on images in [0,255] range instead of [0,1]:
     trans.set_raw_scale('data', 255)
 
     # The reference model has channels in BGR order instead of RGB, so swap:
-    trans.set_channel_swap('data', (2,1,0))
+    trans.set_channel_swap('data', (2, 1, 0))
 
     print "src_directory: {0}".format(app.config['VALIDATED_FOLDER'])
 
     path_files = glob.glob1(app.config['VALIDATED_FOLDER'], "*")
     print "path_files:\n", path_files
+    t1 = time.time()			# time to intitialize Caffe
     print "re-sizing images in {0} ".format(app.config['VALIDATED_FOLDER']),
 
     # --------------------------------------------------------------- #
@@ -302,6 +230,8 @@ def show_anomalies():
         else:
             src_file_list.append("{0}.{1}".format(name, suffix))
 
+    t2 = time.time()			# t2-t1: time to verify files are images
+
 #   file_count = len(src_file_list)
 
 #   # set net to batch size of file count (maximimum size of 128):
@@ -312,7 +242,7 @@ def show_anomalies():
 #   print "Setting net.blobs['data'] shape ... "
 #   print type(net.blobs['data'])
     net.blobs['data'].reshape(file_count, 3, 227, 227)
-        
+
 #   print "net.blogs reshaped."
 
     # Do the ingest/pre-process:
@@ -322,8 +252,8 @@ def show_anomalies():
             break
         path_file = app.config['VALIDATED_FOLDER'] + '/' + myfile
         print "{0}:\t{1}".format(i, path_file)
-        net.blobs['data'].data[i] \
-                      = trans.preprocess('data', caffe.io.load_image(path_file))
+        shorter = trans.preprocess('data', caffe.io.load_image(path_file))
+        net.blobs['data'].data[i] = shorter
 
     fc_level = 7
     if fc_level in [6, 7, 8]:
@@ -333,15 +263,14 @@ def show_anomalies():
         print waah_string.format(fc_level)
 
     print "Pushing images through the network ..."
-    start = time.time()
     net.forward()
-    print "Done. That took ", time.time() - start, "seconds."
+    t3 = time.time()			# t3-t2: time to push through network
 
     if fc_level == 8:
         X = np.full((len(src_file_list), 1000), np.nan)
     else:
         X = np.full((len(src_file_list), 4096), np.nan)
-        
+
     for i in range(len(src_file_list)):
         X[i] = net.blobs[fc_str].data[i]
 
@@ -360,7 +289,7 @@ def show_anomalies():
     ###########
 
     print "Images have been pre-processed."
-#   X = myINF.featurize(fc_level = 6)
+#   X = myINF.featurize(fc_level=6)
     print "We have extracted features!"
     print np.shape(X)
 
@@ -368,10 +297,11 @@ def show_anomalies():
 
 #   ADmodel.X = X6
     print "Attempting iForest on fc6."
-    ADmodel.fit(X = X6)
+    ADmodel.fit(X=X6)
     print "fc6 scores:\n", ADmodel.iFmodel.anomaly_score_
     print ""
     top10fc6 = ADmodel.show_top_k(10)
+    t4 = time.time()			# t4-t3: time to run iForest on fc6
     keys = top10fc6.keys()
     print top10fc6[keys[0]]
     print top10fc6[keys[1]]
@@ -379,17 +309,20 @@ def show_anomalies():
 
 #   ADmodel.X = X7
     print "Attempting iForest on fc7."
-    ADmodel.fit(X = X7)
+    ADmodel.fit(X=X7)
     print "fc7 scores:\n", ADmodel.iFmodel.anomaly_score_
     print ""
     top10fc7 = ADmodel.show_top_k(10)
+    t5 = time.time()			# t5-t4: time to run iForest on fc7
 
 #   ADmodel.X = X8
     print "Attempting iForest on fc8."
-    ADmodel.fit(X = X8)
+    ADmodel.fit(X=X8)
     print "fc8 scores:\n", ADmodel.iFmodel.anomaly_score_
     print ""
     top10fc8 = ADmodel.show_top_k(10)
+    t6 = time.time()			# t6-t5: time to run iForest on fc8
+
     keys = top10fc8.keys()
     print top10fc8[keys[0]]
     print top10fc8[keys[1]]
@@ -404,26 +337,32 @@ def show_anomalies():
         if fc6_score < 0.5:
             fc6_hex_str = '#b4b4b4'
         elif fc6_score >= 0.5 and fc6_score < 0.75:
-            fc6_hex_str = '#' + str(hex(int(300.*(fc6_score - 0.5) + 180))[-2:]) + 'b4b4'
+            val = hex(int(300.*(fc6_score - 0.5) + 180))[-2:]
+            fc6_hex_str = '#' + str(val) + 'b4b4'
         elif fc6_score > 0.75:
             print fc6_score, fc6_score - 0.75
-            fc6_hex_str = '#ff' + str(hex(255 - int(1020.*(fc6_score - 0.75)))[-2:]*2)
+            val = hex(255 - int(1020.*(fc6_score - 0.75)))[-2:]*2
+            fc6_hex_str = '#ff' + str(val)
         if fc7_score < 0.5:
             fc7_hex_str = '#b4b4b4'
         elif fc7_score >= 0.5 and fc7_score < 0.75:
-            fc7_hex_str = '#' + str(hex(int(300.*(fc7_score - 0.5) + 180))[-2:]) + 'b4b4'
+            val = hex(int(300.*(fc7_score - 0.5) + 180))[-2:]
+            fc7_hex_str = '#' + str(val) + 'b4b4'
         elif fc7_score > 0.75:
             print fc7_score, fc7_score - 0.75
-            fc7_hex_str = '#ff' + str(hex(255 - int(1020.*(fc7_score - 0.75)))[-2:]*2)
+            val = hex(255 - int(1020.*(fc7_score - 0.75)))[-2:]*2
+            fc7_hex_str = '#ff' + str(val)
         scoreStr = "fc6_score: {0}, fc7_score: {1}, fc8_score: {2}"
         print scoreStr.format(fc6_score, fc7_score, fc8_score)
         if fc8_score < 0.5:
             fc8_hex_str = '#b4b4b4'
         elif fc8_score >= 0.5 and fc8_score < 0.75:
-            fc8_hex_str = '#' + str(hex(int(300.*(fc8_score - 0.5) + 180))[-2:]) + 'b4b4'
+            val = hex(int(300.*(fc8_score - 0.5) + 180))[-2:]
+            fc8_hex_str = '#' + str(val) + 'b4b4'
         elif fc8_score > 0.75:
             print fc8_score, fc8_score - 0.75
-            fc8_hex_str = '#ff' + str(hex(255 - int(1020.*(fc8_score - 0.75)))[-2:]*2)
+            val = hex(255 - int(1020.*(fc8_score - 0.75)))[-2:]*2
+            fc8_hex_str = '#ff' + str()
 
         scores_list.append((str(i), file_name, fc6_hex_str,
                             "{0:4.2f}".format(fc6_score), fc6_hex_str,
@@ -439,20 +378,66 @@ def show_anomalies():
         new_scores.append((a0, a1, a2, a3, a4, a5, a6, a7,
                            b0, b1, b2, b3, b4, b5, b6, b7))
 
-    return render_template('display_top_k.html', data = new_scores)
+    dt10 = t1 - t0		# time to initialize Caffe
+    dt21 = t2 - t1		# time to verify that files are images
+    dt32 = t3 - t2		# time to push images through network
+    dt43 = t4 - t3		# time to run iForest on fc6
+    dt54 = t5 - t4		# time to run iForest on fc7
+    dt65 = t6 - t5		# time to run iForest on fc8
+    dt63 = t6 - t3		# time to run iForest on all three
+    dt60 = t6 - t0		# total time to process
+    dt21min = int(dt21/60.0)
+    dt21sec = dt21 % 60.0
+    dt32min = int(dt32/60.0)
+    dt32sec = dt32 % 60.0
+    dt63min = int(dt63/60.0)
+    dt63sec = dt63 % 60.0
+    dt60min = int(dt60/60.0)
+    dt60sec = dt60 % 60.0
 
-#   for name, image, score in top_k_list:
+    print ("\n\ninitialize\tvalidate images\tpush through net\tiForest "
+           "fc6\tiForest fc7\tiForest fc8\tall iForest\ttotal time")
+    formatStr = ("{0:5.3f} s\t\t{1:02d} min, {2:5.3f} s\t{3:02d} min,"
+                 " {4:5.3} s\t\t{5:5.3f} s\t\t{6:5.3f} s\t\t{7:5.3f} s\t\t"
+                 "{8:02d} min, {9:5.3f} s\t{10:02d} min, {11:5.3f} s\n")
+    print formatStr.format(dt10, dt21min, dt21sec, dt32min, dt32sec, dt43,
+                           dt54, dt65, dt63min, dt63sec, dt60min, dt60sec)
+    formatStr = ("{0:5.3f}\t\t{1:5.3f}\t\t{2:5.3f}\t\t\t{3:5.3f}\t\t{4:5.3f}"
+                 "\t\t{5:5.3f}\t\t{6:5.3f}\n\n")
+    print formatStr.format(dt10/dt60, dt21/dt60, dt32/dt60, dt43/dt60,
+                           dt54/dt60, dt65/dt60, dt63/dt60)
 
-#       if score < 5.5:
-            
-    return ""
-
+    time_thangs = [dt10, dt21min, dt21sec, dt32min, dt32sec, dt43,
+                   dt54, dt65, dt63min, dt63sec, dt60min, dt60sec,
+                   dt10/dt60, dt21/dt60, dt32/dt60, dt43/dt60,
+                   dt54/dt60, dt65/dt60, dt63/dt60]
+    print np.shape(new_scores),  np.shape(time_thangs)
+    return render_template('display_top_k.html', data=new_scores,
+                           dt10="{0:5.3f}".format(dt10),
+                           dt21min="{0:02d}".format(dt21min),
+                           dt21sec="{0:4.2f}".format(dt21sec),
+                           dt32min="{0:02d}".format(dt32min),
+                           dt32sec="{0:4.2f}".format(dt32sec),
+                           dt43="{0:5.3f}".format(dt43),
+                           dt54="{0:5.3f}".format(dt54),
+                           dt65="{0:5.3f}".format(dt65),
+                           dt63min="{0:02d}".format(dt63min),
+                           dt63sec="{0:4.2f}".format(dt63sec),
+                           dt60min="{0:02d}".format(dt60min),
+                           dt60sec="{0:4.2f}".format(dt60sec),
+                           frac10="{0:5.3f}".format(dt10/dt60),
+                           frac21="{0:5.3f}".format(dt21/dt60),
+                           frac32="{0:5.3f}".format(dt32/dt60),
+                           frac43="{0:5.3f}".format(dt43/dt60),
+                           frac54="{0:5.3f}".format(dt54/dt60),
+                           frac65="{0:5.3f}".format(dt65/dt60),
+                           frac63="{0:5.3f}".format(dt63/dt60))
 
 if __name__ == '__main__':
 
-#   INFmodel = inf.ImageNetFeaturizer()
+    # INFmodel = inf.ImageNetFeaturizer()
 
-#   ADmodel = ad.AnomalyDetect(use_color=True, max_depth=75)
-    ADmodel = ad.AnomalyDetect(use_color=True, max_depth=85, n_estimators = 200)
+    # ADmodel = ad.AnomalyDetect(use_color=True, max_depth=75)
+    ADmodel = ad.AnomalyDetect(use_color=True, max_depth=85, n_estimators=200)
 
     app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
