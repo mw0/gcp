@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+{% block content %}
+    <header>
+      <div class="container">
+        <h2>Mostly Tigers</h2>
+      </div>
+      </header>
+  <div>
+        <h4>The neural network model ingests images after re-sizing them to 256&nbsp;&times;&nbsp;256 pixels. Here they are re-sized to a 128&nbsp;&times;&nbsp;128 format, indicating how much distortion is introduced prior to processing by the DCNN.</h4>
+
+        <h3>Shown below: 55 tigers, 2 leopards, 2 house cats and one house.</h3>
+
+	<p>
+        Select the 'Show anomalies' button above to see the 10 'most-anomalous' 
+        images according to the Isolation Forest algorithm.</h3>
+	</p>
+
+        <form action="/anomalous_tigers" method="POST">
+            <input type="submit" value="Show anomalies.">
+        </form>
+
+        <table border="1px solid black" style="width:300px">
+        
+            <tbody><tr>
+	    <td><img src="static/MostlyTigers_files/sumatran-tiger-hero_92514619.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger6.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/flying-tiger-wallpapers.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/iStock_000010737102Large_-_tiger_close_up.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tigers-31a.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger7.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Sumatran-Tiger-Hero.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/UNDP_KM_tiger.jpg" style="width:128px;height:128px;"></td>
+            </tr>
+        
+            <tr>
+	    <td><img src="static/MostlyTigers_files/HD-Tiger-Wallpapers-Wallpapers-fever.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/bengal-tiger-gazzing.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tigers-41a.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger_1960047c.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger-vivek-sinha-wwf-canon.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/A-tiger-3.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger-09.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Sumatran_Tiger_Berlin_Tierpark.jpg" style="width:128px;height:128px;"></td>
+            </tr>
+        
+            <tr>
+	    <td><img src="static/MostlyTigers_files/Indochinese_Tiger_8.9.2012_Hero_and_Circle_MID_243238.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/female_while_tiger-wide.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/P.t.altaica_Tomak_Male.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tigerSomething.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger-wallpapers-hd.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Tiger.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Tigers.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Haifa_White_Tigers-9129-13.jpg" style="width:128px;height:128px;"></td>
+            </tr>
+        
+            <tr>
+	    <td><img src="static/MostlyTigers_files/0b5f14018c6686b9178e602715f0f7a9.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/TIGER_939144a-682_939197a.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Siberian_Tiger_at_Colchester_Zoo_UK._5755163592.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Tiger(1).jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/White_Tiger_6.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/2012_Suedchinesischer_Tiger.JPG" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger-dirk-freder-isp.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Elegant-Tiger-tigers-35204137-1890-1417.jpg" style="width:128px;height:128px;"></td>
+            </tr>
+        
+            <tr>
+	    <td><img src="static/MostlyTigers_files/Tiger-Wallpaper-tigers-16120028-1024-768.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Namibie_Etosha_Leopard_01edit.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/lead_large.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/house.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/9319-close-up-of-a-tiger-growling-pv.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/114240651_cat_342943c.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger-wallpaper.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/AAEAAQAAAAAAAAHqAAAAJDc5YjRlYTExLWUzNDAtNGY5MS05YWFhLWEzYjhmZDBiZGQ3ZA.jpg" style="width:128px;height:128px;"></td>
+            </tr>
+        
+            <tr>
+	    <td><img src="static/MostlyTigers_files/tiger-01.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/maxresdefault.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/factfile_sumatran_tiger_00.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Tiger.png" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/bengal-tiger-why-matter_7341043.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Tigers4_460x345.png" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/2660239-taming_the_tiger_within.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger-5.jpg" style="width:128px;height:128px;"></td>
+            </tr>
+        
+            <tr>
+	    <td><img src="static/MostlyTigers_files/sumatran_dangerous_tiger-wide.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger_Brian_McKay.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Beautiful-Tiger-random-4602504-1280-890.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/Tigress_at_Jim_Corbett_National_Park.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger_PNG545.png" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger-wallpaper-03.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/8800263-bengal-tiger.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/tiger1.jpg" style="width:128px;height:128px;"></td>
+            </tr>
+        
+            <tr>
+	    <td><img src="static/MostlyTigers_files/tigerPowerSlide1.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/leopard-07.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/6951971-threatening-tiger.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/sumatran_tiger-wide.jpg" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/white128x128.png" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/white128x128.png" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/white128x128.png" style="width:128px;height:128px;"></td>
+	    <td></td><td><img src="static/MostlyTigers_files/white128x128.png" style="width:128px;height:128px;"></td>
+            </tr>
+        
+        </tbody></table>
+    <hr>
+  </div>
+{% endblock %}
+

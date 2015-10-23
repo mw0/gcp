@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+    <header>
+      <div class="container">
+        <h1>Anomaly Detection in Images Using a Convlutional Neural Network and Isolation Forest</h1>
+      </div>
+      </header>
+
+  <p>
+  <div>
+    This application finds anomalies in images. It does this by feeding images through a pre-trained, deep convolution neural network&sup1; extracting high-level feature weights; and constructing isolation trees&sup2; using those weights.
+
+    <p>For more infomation on this, see the <a href="http://github.com/mw0/gcp">project description</a>.
+
+    <p>
+    You can view anomaly scores computed for pre-processed examples, or you can upload your own:
+
+    <form action="/provided_images" method="POST">
+        <input type="submit" value="View pre-processed examples">
+    </form><br>
+    <form action="/upload_form" method="POST">
+        <input type="submit" value="I have images to upload">
+    </form>
+    </p>
+
+    <p>&nbsp;</p><p class="footnote">
+    &sup1;<a href="http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf">Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems. 2012</a>.<br>
+    &sup2;<a href="http://dx.doi.org/10.1109/ICDM.2008.17">Liu, F.T., K. M. Ting and Z.-H. Zhou, <em>Isolation Forest</em>, Eighth IEEE International Conference on Data Mining, 2008, ICDM 08., p413., 2008.</a><br>
+    </p>
+  </div>
+{% endblock %}
