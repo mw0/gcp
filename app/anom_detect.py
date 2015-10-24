@@ -255,6 +255,8 @@ def show_anomalies():
         shorter = trans.preprocess('data', caffe.io.load_image(path_file))
         net.blobs['data'].data[i] = shorter
 
+    t3 = time.time()
+
     fc_level = 7
     if fc_level in [6, 7, 8]:
         fc_str = 'fc{0:1d}'.format(fc_level)
@@ -264,7 +266,7 @@ def show_anomalies():
 
     print "Pushing images through the network ..."
     net.forward()
-    t3 = time.time()			# t3-t2: time to push through network
+    t4 = time.time()			# t4-t2: time to push through network
 
     if fc_level == 8:
         X = np.full((len(src_file_list), 1000), np.nan)
@@ -301,7 +303,7 @@ def show_anomalies():
     print "fc6 scores:\n", ADmodel.iFmodel.anomaly_score_
     print ""
     top10fc6 = ADmodel.show_top_k(10)
-    t4 = time.time()			# t4-t3: time to run iForest on fc6
+    t5 = time.time()			# t5-t4: time to run iForest on fc6
     keys = top10fc6.keys()
     print top10fc6[keys[0]]
     print top10fc6[keys[1]]
@@ -313,7 +315,7 @@ def show_anomalies():
     print "fc7 scores:\n", ADmodel.iFmodel.anomaly_score_
     print ""
     top10fc7 = ADmodel.show_top_k(10)
-    t5 = time.time()			# t5-t4: time to run iForest on fc7
+    t6 = time.time()			# t6-t5: time to run iForest on fc7
 
 #   ADmodel.X = X8
     print "Attempting iForest on fc8."
@@ -321,7 +323,7 @@ def show_anomalies():
     print "fc8 scores:\n", ADmodel.iFmodel.anomaly_score_
     print ""
     top10fc8 = ADmodel.show_top_k(10)
-    t6 = time.time()			# t6-t5: time to run iForest on fc8
+    t7 = time.time()			# t7-t6: time to run iForest on fc8
 
     keys = top10fc8.keys()
     print top10fc8[keys[0]]
@@ -380,37 +382,43 @@ def show_anomalies():
 
     dt10 = t1 - t0		# time to initialize Caffe
     dt21 = t2 - t1		# time to verify that files are images
-    dt32 = t3 - t2		# time to push images through network
-    dt43 = t4 - t3		# time to run iForest on fc6
-    dt54 = t5 - t4		# time to run iForest on fc7
-    dt65 = t6 - t5		# time to run iForest on fc8
-    dt63 = t6 - t3		# time to run iForest on all three
-    dt60 = t6 - t0		# total time to process
+    dt32 = t3 - t2		# time to pre-process images
+    dt43 = t4 - t3		# time to push images through network
+    dt54 = t5 - t4		# time to run iForest on fc6
+    dt65 = t6 - t5		# time to run iForest on fc7
+    dt76 = t7 - t6		# time to run iForest on fc8
+    dt74 = t7 - t4		# time to run iForest on all three
+    dt70 = t7 - t0		# total time to process
     dt21min = int(dt21/60.0)
     dt21sec = dt21 % 60.0
     dt32min = int(dt32/60.0)
     dt32sec = dt32 % 60.0
-    dt63min = int(dt63/60.0)
-    dt63sec = dt63 % 60.0
-    dt60min = int(dt60/60.0)
-    dt60sec = dt60 % 60.0
+    dt43min = int(dt43/60.0)
+    dt43sec = dt43 % 60.0
+    dt74min = int(dt74/60.0)
+    dt74sec = dt74 % 60.0
+    dt70min = int(dt70/60.0)
+    dt70sec = dt70 % 60.0
 
-    print ("\n\ninitialize\tvalidate images\tpush through net\tiForest "
+    print ("\n\ninitialize\tvalidate images\tpre-process images"
+           "\tpush through net\tiForest "
            "fc6\tiForest fc7\tiForest fc8\tall iForest\ttotal time")
-    formatStr = ("{0:5.3f} s\t\t{1:02d} min, {2:5.3f} s\t{3:02d} min,"
-                 " {4:5.3} s\t\t{5:5.3f} s\t\t{6:5.3f} s\t\t{7:5.3f} s\t\t"
-                 "{8:02d} min, {9:5.3f} s\t{10:02d} min, {11:5.3f} s\n")
-    print formatStr.format(dt10, dt21min, dt21sec, dt32min, dt32sec, dt43,
-                           dt54, dt65, dt63min, dt63sec, dt60min, dt60sec)
-    formatStr = ("{0:5.3f}\t\t{1:5.3f}\t\t{2:5.3f}\t\t\t{3:5.3f}\t\t{4:5.3f}"
-                 "\t\t{5:5.3f}\t\t{6:5.3f}\n\n")
-    print formatStr.format(dt10/dt60, dt21/dt60, dt32/dt60, dt43/dt60,
-                           dt54/dt60, dt65/dt60, dt63/dt60)
+    formatStr = ("{0:5.3f} s\t\t{1:02d} min, {2:5.3f} s"
+                 "\t{3:02d} min, {4:5.3f} s\t{5:02d} min,"
+                 " {6:5.3} s\t\t{7:5.3f} s\t\t{8:5.3f} s\t\t{9:5.3f} s\t\t"
+                 "{10:02d} min, {11:5.3f} s\t{12:02d} min, {13:5.3f} s\n")
+    print formatStr.format(dt10, dt21min, dt21sec, dt32min, dt32sec, dt43min,
+                           dt43sec, dt54, dt65, dt76, dt74min, dt74sec,
+                           dt70min, dt70sec)
+    formatStr = ("{0:5.3f}\t\t{1:5.3f}\t\t{2:5.3f}\t\t\t{3:5.3f}\t\t\t{4:5.3f}"
+                 "\t\t{5:5.3f}\t\t{6:5.3f}\t\t{7:5.3f}\n\n")
+    print formatStr.format(dt10/dt70, dt21/dt70, dt32/dt70, dt43/dt70,
+                           dt54/dt70, dt65/dt70, dt76/dt70, dt74/dt70)
 
-    time_thangs = [dt10, dt21min, dt21sec, dt32min, dt32sec, dt43,
-                   dt54, dt65, dt63min, dt63sec, dt60min, dt60sec,
-                   dt10/dt60, dt21/dt60, dt32/dt60, dt43/dt60,
-                   dt54/dt60, dt65/dt60, dt63/dt60]
+    time_thangs = [dt10, dt21min, dt21sec, dt32min, dt32sec, dt43min, dt43sec,
+                   dt54, dt65, dt76, dt74min, dt74sec, dt70min, dt70sec,
+                   dt10/dt70, dt21/dt70, dt32/dt70, dt43/dt70, dt54/dt70,
+                   dt65/dt70, dt76/dt70, dt74/dt70]
     print np.shape(new_scores),  np.shape(time_thangs)
     return render_template('display_top_k.html', data=new_scores,
                            dt10="{0:5.3f}".format(dt10),
@@ -418,20 +426,23 @@ def show_anomalies():
                            dt21sec="{0:4.2f}".format(dt21sec),
                            dt32min="{0:02d}".format(dt32min),
                            dt32sec="{0:4.2f}".format(dt32sec),
-                           dt43="{0:5.3f}".format(dt43),
+                           dt43min="{0:02d}".format(dt43min),
+                           dt43sec="{0:4.2f}".format(dt43sec),
                            dt54="{0:5.3f}".format(dt54),
                            dt65="{0:5.3f}".format(dt65),
-                           dt63min="{0:02d}".format(dt63min),
-                           dt63sec="{0:4.2f}".format(dt63sec),
-                           dt60min="{0:02d}".format(dt60min),
-                           dt60sec="{0:4.2f}".format(dt60sec),
-                           frac10="{0:5.3f}".format(dt10/dt60),
-                           frac21="{0:5.3f}".format(dt21/dt60),
-                           frac32="{0:5.3f}".format(dt32/dt60),
-                           frac43="{0:5.3f}".format(dt43/dt60),
-                           frac54="{0:5.3f}".format(dt54/dt60),
-                           frac65="{0:5.3f}".format(dt65/dt60),
-                           frac63="{0:5.3f}".format(dt63/dt60))
+                           dt76="{0:5.3f}".format(dt76),
+                           dt74min="{0:02d}".format(dt74min),
+                           dt74sec="{0:4.2f}".format(dt74sec),
+                           dt70min="{0:02d}".format(dt70min),
+                           dt70sec="{0:4.2f}".format(dt70sec),
+                           frac10="{0:5.3f}".format(dt10/dt70),
+                           frac21="{0:5.3f}".format(dt21/dt70),
+                           frac32="{0:5.3f}".format(dt32/dt70),
+                           frac43="{0:5.3f}".format(dt43/dt70),
+                           frac54="{0:5.3f}".format(dt54/dt70),
+                           frac65="{0:5.3f}".format(dt65/dt70),
+                           frac76="{0:5.3f}".format(dt76/dt70),
+                           frac74="{0:5.3f}".format(dt74/dt70))
 
 if __name__ == '__main__':
 
