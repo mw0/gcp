@@ -48,6 +48,7 @@ where *c(n)* represents that expected path length for a failed binary tree searc
 ![anomaly score limits](https://github.com/mw0/gcp/blob/master/presentation/sx.png)
 
 Typically, scores < 0.5 indicate nothing unusual, while scores > 0.6 suggest an outlier.
+(See Lui, F.T. et al, [2008] for additional details.)
 The significance of particular scores, however, depends upon the homogeneity of the bulk of the sample, which here will be dependent to some degree on the choice for the high-level features of the image.  
   
 In practice, the process is somewhat more complicated:
