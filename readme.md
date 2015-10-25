@@ -41,7 +41,7 @@ On average, it is more difficult to isolate a point that has near neighbors, so 
 
 Anomaly scores <em>s</em>(<em>x</em>) are constructed from average path length &lang;<em>h(</em><em>x</em>)&rang; such that:
 
-![anomaly score limits](https://github.com/mw0/gcp/blob/master/sx.png)
+![anomaly score limits](https://github.com/mw0/gcp/blob/master/presentation/sx.png)
 
 where &lang;<em>h</em>(<em>x</em>)&rang; is the ensemble average path length required to isolate point <em>x</em>.
 Typically, scores < 0.5 indicate nothing unusual, while scores > 0.6 suggest an outlier.
@@ -49,9 +49,9 @@ The significance of particular scores, however, depends upon the homogeneity of 
   
 In practice, the process is somewhat more complicated:
 
-* First (training phase) an ensemble of iTrees is built from random sub-samples of the original dataset;
-* Second (test phase) each data point is fed into the ensemble of iTrees, with path lengths computed for each tree
-* Third anomaly scores are computed using each point's average path length.  
+* First (training phase), an ensemble of iTrees is built from random sub-samples of the original dataset;
+* Second (test phase), each data point is fed into the ensemble of iTrees, with path lengths computed for each tree
+* Third, anomaly scores are computed using each point's average path length.  
   
 Key points are that:
 * True anomalies are likely to be well-represented in the iTrees of the ensemble, resulting as external nodes with short path lengths
