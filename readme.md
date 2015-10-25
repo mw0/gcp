@@ -108,10 +108,10 @@ The 10 "most anomalous" images returned are shown below:
 
 When you try out the app yourself, you will find that there is a bit of a wait when you request anomaly scores. If you scroll to  the bottom of the table, you will see Timing Information, showing you what took all that time. Here is a typical example:
 
-|initialize Caffe|validate images|pre-process images|push through network|iForest on fc6|iForest on fc7|iForest on fc8|iForest combined|total
---|--------------|---------------|------------------|--------------------|--------------|--------------|--------------|----------------|-----
-time|0.005 s|00 m, 1.44 s|00 m, 15.90 s|00 m, 0.24 s|1.036 s|0.899 s|0.589 s|00 m, 2.52 s|00 m, 20.11 s
-fraction|0.000|0.072|0.791|0.012|0.052|0.045|0.029|0.126|
+||initialize Caffe|validate images|pre-process images|push through network|iForest on fc6|iForest on fc7|iForest on fc8|iForest combined|total|
+|----|--------------|---------------|------------------|--------------------|--------------|--------------|--------------|----------------|-----|
+|time|0.005 s|00 m, 1.44 s|00 m, 15.90 s|00 m, 0.24 s|1.036 s|0.899 s|0.589 s|00 m, 2.52 s|00 m, 20.11 s|
+|fraction|0.000|0.072|0.791|0.012|0.052|0.045|0.029|0.126||
 
 Most of the time &gt; 75% is spent pre-processing images (re-sizing and subtracting training pixel averages), with the time required to push those images through the neural network about 1% of the total. Clearly, the GPUs are used to great advantage in the neural network, but are not employed when re-sizing the images.  
   
