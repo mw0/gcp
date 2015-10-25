@@ -113,6 +113,6 @@ When you try out the app yourself, you will find that there is a bit of a wait w
 |time|0.005&nbsp;s|00&nbsp;m,&nbsp;1.44&nbsp;s|00&nbsp;m,&nbsp;15.90&nbsp;s|00&nbsp;m,&nbsp;0.24&nbsp;s|1.036&nbsp;s|0.899&nbsp;s|0.589&nbsp;s|00&nbsp;m,&nbsp;2.52&nbsp;s|00&nbsp;m,&nbsp;20.11&nbsp;s|
 |fraction|0.000|0.072|0.791|0.012|0.052|0.045|0.029|0.126||
 
-Most of the time &gt; 75% is spent pre-processing images (re-sizing and subtracting training pixel averages), with the time required to push those images through the neural network about 1% of the total. Clearly, the GPUs are used to great advantage in the neural network, but are not employed when re-sizing the images.  
+Most of the time, &gt; 75%, is spent pre-processing images (re-sizing and subtracting training pixel averages), with the time required to push those images through the neural network only about 1% of the total. Clearly, the GPUs are used to great advantage in the neural network, but are not employed when re-sizing the images.  
   
 Generating the isolation forest trees and extracting anomaly scores for the three feature sets typically takes 10-20% of the total time. If you run this yourself, you may find that the greatest time required is that to upload your images in the first place.
