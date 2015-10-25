@@ -15,9 +15,7 @@ Now I ask the question of how to find anomalies automatically, using machine lea
 The [app linked here](http://www.rustytrephine.info "Try this App! ") shows examples of images that have been given anomaly scores indicating how much they differ from the overall collection of photos provided.
 To be more specific, a batch of images are fed into a deep convolution neural network (DCNN), and high-level feature weights are extracted from it. These in turn are fed into an Isolation Forest anomaly algorithm, and those images with the highest scores are displayed.
 
-<p style="text-color: dark-red;">
 *It would be too easy to cherry pick results, so you also have the option of trying it out yourself with photos that you upload.*
-</p>
 
 ## Outline:
 * <a href="#iForest">Isolation Forest</a>
@@ -47,7 +45,17 @@ Anomaly scores <em>s</em>(<em>x</em>) are constructed from average path length &
 
 where &lang;<em>h</em>(<em>x</em>)&rang; is the ensemble average path length required to isolate point <em>x</em>.
 Typically, scores < 0.5 indicate nothing unusual, while scores > 0.6 suggest an outlier.
-The significance of particular scores, however, depends upon the homogeneity of the bulk of the sample, which here will be dependent to some degree on the choice for the high-level features of the image.
+The significance of particular scores, however, depends upon the homogeneity of the bulk of the sample, which here will be dependent to some degree on the choice for the high-level features of the image.  
+  
+In practice, the process is somewhat more complicated:
+
+* First (training phase) an ensemble of iTrees is built from random sub-samples of the original dataset;
+* Second (test phase) each data point is fed into the ensemble of iTrees, with path lengths computed for each tree
+* Third anomaly scores are computed using each point's average path length.  
+  
+Key points are that:
+* True anomalies are likely to be well-represented in the iTrees of the ensemble, resulting as external nodes with short path lengths
+* It is unnecessary to construct trees that isolate every "normal" point, as we are only interested in establishing that they have long path lengths; passed through the ensemble of iTrees, ordinary points will terminate in the same external nodes as their near neighbors (with correspondingly long average path lengths)
 
 ##  <a name="DCNN">The Deep Convolution Neural Network</a>
 
