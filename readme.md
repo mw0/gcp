@@ -98,5 +98,5 @@ The 10 "most anomalous" images returned are shown below:
 * Our intuition may suggest that the missing house cat should be ranked higher than either of the tigers shown, but:
   * it is important to keep in mind that there is more to most images than the presence of a feline or house. The house, for example has grass and trees, which are also present in a large fraction of the tiger images.
   * two of the 'anomalous' tigers are on white or snow backgrounds.
-  * each of these distinctions is encoded in the high-level features extracted from the neural network, while our own brains are focused on classify animal types.
+  * each of these distinctions is encoded in the high-level features extracted from the neural network, while our own brains are prejudiced by the construction of the description above to focus soley  on classifying the central object.
 * Isolation Forest relies on randomness, so each time it is done there are small variations in the scores. This can affect the ordering of the results displayed.
