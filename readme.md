@@ -58,7 +58,7 @@ In practice, the process is somewhat more complicated:
 * Third, anomaly scores are computed using each point's average path length.  
   
 Key points are that:
-* True anomalies will be well-represented in an isolation forest ensemble, terminate in external nodes with short path lengths;
+* True anomalies will be well-represented in an isolation forest ensemble, terminating in external nodes with short path lengths;
 * It is unnecessary to construct trees that isolate every "normal" point, as we are only interested in establishing that they have long path lengths; passed through the ensemble of iTrees, ordinary points will tend to terminate in the same external nodes as their near neighbors (with correspondingly long average path lengths)
 
 ##  <a name="DCNN">The Deep Convolution Neural Network</a>
@@ -101,4 +101,4 @@ The 10 "most anomalous" images returned are shown below:
   * each of these distinctions is encoded in the high-level features extracted from the neural network, while our own brains are prejudiced by the construction of the description above to focus soley  on classifying the central object.
 * Isolation Forest relies on randomness, so each time it is done there are small variations in the scores. This can affect the ordering of the results displayed.
 
-### An example like this is subject to tampering. You should [try out the app yourself](http://www.rustytrephine.info "try this App! ") using images that you choose!
+#### An example like this is subject to tampering. You should [try out the app yourself](http://www.rustytrephine.info "try this App! ") using images that you choose!
