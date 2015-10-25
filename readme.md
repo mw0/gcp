@@ -39,11 +39,14 @@ On average, it is more difficult to isolate a point that has near neighbors, so 
 
 ![Isolating Points with iTrees](https://github.com/mw0/gcp/blob/master/presentation/ITreeIsolatingPoints.png)
 
-Anomaly scores <em>s</em>(<em>x</em>) are constructed from average path length &lang;<em>h(</em><em>x</em>)&rang; such that:
+Anomaly scores <em>s</em>(<em>x</em>) are constructed from the ensemble average path length &lang;<em>h(</em><em>x</em>)&rang; required to isolate a point <em>x</em>:
+
+![anomaly score limits](https://github.com/mw0/gcp/blob/master/presentation/sxn.png)
+
+where *c(n)* represents that expected path length for a failed binary tree search. This results in the limits
 
 ![anomaly score limits](https://github.com/mw0/gcp/blob/master/presentation/sx.png)
 
-where &lang;<em>h</em>(<em>x</em>)&rang; is the ensemble average path length required to isolate point <em>x</em>.
 Typically, scores < 0.5 indicate nothing unusual, while scores > 0.6 suggest an outlier.
 The significance of particular scores, however, depends upon the homogeneity of the bulk of the sample, which here will be dependent to some degree on the choice for the high-level features of the image.  
   
