@@ -43,7 +43,7 @@ Anomaly scores <em>s</em>(<em>x</em>) are constructed from the ensemble average 
 
 ![anomaly score limits](https://github.com/mw0/gcp/blob/master/presentation/sxn.png)
 
-where *c(n)* represents that expected path length for a failed binary tree search. This results in the limits
+where *c(n)* represents the expected path length for a failed binary tree search. This results in the limits
 
 ![anomaly score limits](https://github.com/mw0/gcp/blob/master/presentation/sx.png)
 
@@ -54,12 +54,12 @@ The significance of particular scores, however, depends upon the homogeneity of 
 In practice, the process is somewhat more complicated:
 
 * First (training phase), an ensemble of iTrees is built from random sub-samples of the original dataset;
-* Second (test phase), each data point is fed into the ensemble of iTrees, with path lengths computed for each tree
+* Second (test phase), every data point is fed into that ensemble of iTrees, with path lengths computed for each tree;
 * Third, anomaly scores are computed using each point's average path length.  
   
 Key points are that:
-* True anomalies are likely to be well-represented in the iTrees of the ensemble, resulting as external nodes with short path lengths
-* It is unnecessary to construct trees that isolate every "normal" point, as we are only interested in establishing that they have long path lengths; passed through the ensemble of iTrees, ordinary points will terminate in the same external nodes as their near neighbors (with correspondingly long average path lengths)
+* True anomalies will be well-represented in an isolation forest ensemble, terminate in external nodes with short path lengths;
+* It is unnecessary to construct trees that isolate every "normal" point, as we are only interested in establishing that they have long path lengths; passed through the ensemble of iTrees, ordinary points will tend to terminate in the same external nodes as their near neighbors (with correspondingly long average path lengths)
 
 ##  <a name="DCNN">The Deep Convolution Neural Network</a>
 
@@ -100,3 +100,5 @@ The 10 "most anomalous" images returned are shown below:
   * two of the 'anomalous' tigers are on white or snow backgrounds.
   * each of these distinctions is encoded in the high-level features extracted from the neural network, while our own brains are prejudiced by the construction of the description above to focus soley  on classifying the central object.
 * Isolation Forest relies on randomness, so each time it is done there are small variations in the scores. This can affect the ordering of the results displayed.
+
+### An example like this is subject to tampering. You should [try out the app yourself](http://www.rustytrephine.info "try this App! ") using images that you choose!
