@@ -120,7 +120,7 @@ class iForest():
 
     -max_depth: is the maximum depth of each tree
     '''
-    def __init__(self, n_estimators=20, sample_size=None, add_index=True,
+    def __init__(self, n_estimators=50, sample_size=None, add_index=True,
                  max_depth=100):
         self.n_estimators = n_estimators
         self.sample_size = sample_size

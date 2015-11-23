@@ -8,10 +8,10 @@ import numpy as np
 import ImageNetFeaturizer as inf
 import AnomalyDetect as ad
 
-PROCESSED_FOLDER = '/home/wilber/work/Galvanize/gcp-data/iForest/tiger'
+IMAGE_SRC_FOLDER = '/home/wilber/work/Galvanize/gcp-data/iForest/tiger'
 
 INFmodel = inf.ImageNetFeaturizer()
-print "status: ", INFmodel.preprocess_images(PROCESSED_FOLDER)
+print "status: ", INFmodel.preprocess_images(IMAGE_SRC_FOLDER)
 X = INFmodel.featurize(fc_level = 6)
 print np.shape(X)
 

@@ -183,7 +183,7 @@ class AnomalyDetect(object):
         if self.show_calc_time:
             totsecs = time.time() - start
             mins = int(totsecs/60)
-            secs = totsecs - 60.*mins
+            secs = totsecs - 60.0*mins
             print "Elapsed time = {0} minutes, {1} seconds".format(mins, secs)
         return
 

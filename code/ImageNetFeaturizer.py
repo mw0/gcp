@@ -9,11 +9,11 @@ import glob
 
 # Make sure that caffe is in the python path:
 
-import os
-import caffe
-
 caffe_root = '/home/wilber/work/caffe/'
 sys.path.insert(0, caffe_root + 'python')
+
+import os
+import caffe
 
 
 class ImageNetFeaturizer(object):
@@ -32,12 +32,12 @@ class ImageNetFeaturizer(object):
         """
         INPUT: None
         """
-        self.X = None			# n x 4096 ndarray of feature weights
-        self.src_dir = None		# location of images to be processed
+        self.X = None		        # n x 4096 ndarray of feature weights
+        self.src_dir = None	        # location of images to be processed
         self.src_file_list = None       # list of str, usable files in src_dir
         self.ignored_files = None       # Files not identifiable, ignored
-        self.net = None			# The caffe model itself
-        self.trans = None		# caffe's image transformation object
+        self.net = None		        # The caffe model itself
+        self.trans = None	        # caffe's image transformation object
         print caffe_root
 
         # Set Caffe to GPU mode:
@@ -54,14 +54,13 @@ class ImageNetFeaturizer(object):
 
         # Input preprocessing: 'data' is the name of the
         # input blob == net.inputs[0]
-        self.trans = caffe.io.Transformer({'data':
-                                           self.net.blobs['data'].data.shape})
+        data_shape = self.net.blobs['data'].data.shape
+        self.trans = caffe.io.Transformer({'data': data_shape})
         self.trans.set_transpose('data', (2, 0, 1))
-        # Obtain mean pixel values:
+        # Mean pixel values:
+        path_mean = caffe_root + 'python/caffe/imagenet/ilsvrc_2012_mean.npy'
         self.trans.set_mean('data',
-                            np.load(caffe_root +
-                                    'python/caffe/imagenet/'
-                                    'ilsvrc_2012_mean.npy').mean(1).mean(1))
+                            np.load(path_mean).mean(1).mean(1))
 
         # The reference model operates on images in [0,255] range instead
         # of [0,1]:
@@ -114,25 +113,26 @@ class ImageNetFeaturizer(object):
                 self.src_file_list.append("{0}.{1}".format(name, suffix))
 
         # set net to batch size of file count (maximimum size of 128):
-        max_count = 128
+        max_count = 1024
         file_count = min([max_count, len(self.src_file_list)])
         print "file_count: ", file_count
         print "Setting net.blobs['data'] shape ... "
         print type(self.net.blobs['data'])
         self.net.blobs['data'].reshape(file_count, 3, 227, 227)
 
-        print "net.blogs reshaped."
+        print "net.blobs reshaped."
 
         # Do the ingest/pre-process:
-        complaintStr = 'Cannot process all images; limit {0}'
         for i, myfile in enumerate(self.src_file_list):
             if i >= max_count:
-                status_string = complaintStr.format(max_count)
+                status_format = 'Cannot process all images; limit {0}'
+                status_string = status_format.format(max_count)
                 break
             path_file = self.src_dir + '/' + myfile
             print "{0}:\t{1}".format(i, path_file)
-            self.net.blobs['data'].data[i] =
-            self.trans.preprocess('data', caffe.io.load_image(path_file))
+            image = self.trans.preprocess('data',
+                                          caffe.io.load_image(path_file))
+            self.net.blobs['data'].data[i] = image
 
         return status_string
 
@@ -187,13 +187,13 @@ if __name__ == "__main__":
                 + 'bvlc_reference_caffenet.caffemodel'
     if not os.path.isfile(caffe_root + modelPath):
         print("Downloading pre-trained CaffeNet model...")
-        shell_command = (caffe_root + 'scripts/download_model_binary.py  ' +
-                         caffe_root + 'models/bvlc_reference_caffenet')
+        shell_command = caffe_root + 'scripts/download_model_binary.py  '
+        + caffe_root + 'models/bvlc_reference_caffenet'
         subprocess.call(shell_command)
 
     myINF = ImageNetFeaturizer()
     myINF.preprocess_images(source_directory)
-    X = myINF.featurize(fc_level=7)
+    X = myINF.featurize(fc_level=6)
     print np.shape(X)
     plt.plot(X[0])
     plt.plot(X[1])
