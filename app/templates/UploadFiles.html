@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+    <header>
+      <div class="container">
+        <h2>Upload Your Files</h2>
+      </div>
+      </header>
+  <div>
+    <p>
+    Each time you upload files, previous uploads will be removed from the server.
+    <p>
+    Images in formats other than PNG and JPEG will be ignored.
+    <p>
+    <table>
+    <tr><td>
+            <form method="POST" enctype="multipart/form-data" action="/upload_process">
+                <input type="file" name="file[]" multiple="">
+                <input type="submit" value="Upload">
+            </form>
+        </td>
+    </tr>
+    </table>
+  </div>
+{% endblock %}
+
+

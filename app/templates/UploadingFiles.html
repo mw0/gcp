@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+    <header>
+      <div class="container">
+        <h2>Pre-processed Results</h2>
+      </div>
+      </header>
+  <div>
+    <form action="/mostly_tigers" method="POST">
+        <input type="submit" value="Mostly tigers, (Oh my!)">
+    </form><br>
+    <form action="/mostly_homes" method="POST">
+        <input type="submit" value="Mostly homes" disabled>
+    </form><br>
+    <form action="/yum_pizza" method="POST">
+        <input type="submit" value="Yum, pizza" disabled>
+    </form> 
+
+  </div>
+{% endblock %}

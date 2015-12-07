@@ -1,28 +1,40 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-    <head>
-        <title>Anomalous Files</title>
-    </head>
-
-    <body>
+{% extends "layout.html" %}
+{% block content %}
+    <header>
+      <div class="container">
         <h2>Most Anomalous Files</h2>
+      </div>
+      </header>
+  <div>
         <p>&nbsp;</p>
         <form action="/upload_form" method="POST">
-        <input type="submit" value="So much fun! Start all over.">
+        <input type="submit" value="So much fun! I want to upload more files.">
+	</form><br>
+        <form action="/" method="POST">
+        <input type="submit" value="Back to the main page.">
+	</form><br>
         <p>&nbsp;</p>
-        <table border="1px solid black" style="width:300px">
+        <table style="width:300px">
 	    <tr><th>fc7&nbsp;rank</th><th>image</th><th>fc6&nbsp;score</th>
 	        <th>fc7&nbsp;score</th><th>fc8&nbsp;score</th>
-	        <td>&nbsp;</td>
+	        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	        <th>fc7&nbsp;rank</th><th>image</th><th>fc6&nbsp;score</th>
 	        <th>fc7&nbsp;score</th><th>fc8&nbsp;score</th>
 	    </tr>
         {% for i0, file_name0, fc6_col0, fc6_score0, fc7_col0, fc7_score0, fc8_col0, fc8_score0, i1, file_name1, fc6_col1, fc6_score1, fc7_col1, fc7_score1, fc8_col1, fc8_score1 in data %}
-            <tr><td>{{i0}}</td><td><img src="{{ url_for('static', filename=file_name0) }}" style="width:128px;height:128px;"></img></td><td bgcolor = "{{fc6_col0}}">{{fc6_score0}}</td><td bgcolor = "{{fc7_col0}}">{{fc7_score0}}</td><td  bgcolor = "{{fc8_col0}}">{{fc8_score0}}</td>
+            <tr><td align="center">{{i0}}</td><td><img src="{{ url_for('static', filename=file_name0) }}" style="width:128px;height:128px;"></img></td><td bgcolor = "{{fc6_col0}}">{{fc6_score0}}</td><td bgcolor = "{{fc7_col0}}">{{fc7_score0}}</td><td  bgcolor = "{{fc8_col0}}">{{fc8_score0}}</td>
             <td>&nbsp;</td>
-	        <td>{{i1}}</td><td><img src="{{ url_for('static', filename=file_name1) }}" style="width:128px;height:128px;"></img></td><td bgcolor = "{{fc6_col1}}">{{fc6_score1}}</td><td bgcolor = "{{fc7_col1}}">{{fc7_score1}}</td><td  bgcolor = "{{fc8_col1}}">{{fc8_score1}}</td>
+	        <td align="center">{{i1}}</td><td><img src="{{ url_for('static', filename=file_name1) }}" style="width:128px;height:128px;"></img></td><td bgcolor = "{{fc6_col1}}">{{fc6_score1}}</td><td bgcolor = "{{fc7_col1}}">{{fc7_score1}}</td><td  bgcolor = "{{fc8_col1}}">{{fc8_score1}}</td>
             </tr>
         {% endfor %}
         </table>
-    </body>
-</html>
+	<p><br>&nbsp;</p>
+	<table>
+	<caption>Timing Information</caption>
+	<tr><th>&nbsp;</th><th>initialize Caffe</th><th>validate images</th><th>pre-process images</th><th>push through network</th><th>iForest on fc6</th><th>iForest on fc7</th><th>iForest on fc8</th><th>iForest combined</th><th>total</th></tr>
+	<tr><th align="right">time:</th><td>{{dt10}}&nbsp;s</td><td>{{dt21min}}&nbsp;m,&nbsp;{{dt21sec}}&nbsp;s</td><td>{{dt32min}}&nbsp;m,&nbsp;{{dt32sec}}&nbsp;s</td><td>{{dt43min}}&nbsp;m,&nbsp;{{dt43sec}}&nbsp;s</td><td>{{dt54}}&nbsp;s</td><td>{{dt65}}&nbsp;s</td><td>{{dt76}}&nbsp;s</td><td>{{dt74min}}&nbsp;m,&nbsp;{{dt74sec}}&nbsp;s</td><td>{{dt70min}}&nbsp;m,&nbsp;{{dt70sec}}&nbsp;s</td></tr>
+	<tr><th align="right">fraction:</th><td>{{frac10}}</td><td>{{frac21}}</td><td>{{frac32}}</td><td>{{frac43}}</td><td>{{frac54}}</td><td>{{frac65}}</td><td>{{frac76}}</td><td>{{frac74}}</td><td>&nbsp;</td></tr>
+	</table>
+	<p><br>&nbsp;</p>
+  </div>
+{% endblock %}

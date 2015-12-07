@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+    <header>
+      <div class="container">
+        <h2>Upload Status</h2>
+      </div>
+      </header>
+  <div>
+    <p>
+    <div>
+    <form action="/display_images" method="POST">
+        <input type="submit" value="Display Images">
+    </form> 
+    <form action="/show_anomalies" method="POST">
+        <input type="submit" value="Show Anomalies">
+    </form> 
+
+    <table>
+    <tr align="left"><th>i</th><th>File name</th><th>Status</th></tr>
+{% for index, filename, comment in data[0] %}
+        <tr><td>{{ index }}</td><td>{{ filename }}</td><td>{{ comment }}</td></tr>
+{% endfor %}
+    </table>
+    <p>
+    {{ data[1] }}
+    </p>
+  </div>
+{% endblock %}
