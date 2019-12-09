@@ -3,7 +3,7 @@
 #### *A Capstone Project for the Galvanize Data Science Immersive Program, by Mark Wilber*
 
 <center>
-![Which of these does not belong?](https://github.com/mw0/gcp/blob/master/SesameStreetWhichNotAlike.png "Which of these does not belong?")
+![Which of these does not belong?](https://github.com/mw0/gcp/blob/master/SesameStreetWhichNotAlike.png)
 </center>
 
 ## Overview:
@@ -12,10 +12,10 @@ In my former work as a research scientist I always sought out anomalies; on a ve
   
 Now I ask the question of how to find anomalies automatically, using machine learning. I've been very interested in deep convolution neural networks (DCNNs), so images make a natural &mdash; but far from exhaustive &mdash; choice of subject matter. 
 
-The [app linked here](http://www.rustytrephine.info "Try this App! ") shows examples of images that have been given anomaly scores indicating how much they differ from the overall collection of photos provided.
-To be more specific, a batch of images are fed into a deep convolution neural network (DCNN), and high-level feature weights are extracted from it. These in turn are fed into an Isolation Forest anomaly algorithm, and those images with the highest scores are displayed.
+The app (no longer active) showed examples of images that have been given anomaly scores, which indicate how much they differ from the overall collection of photos provided. (See below.)
+To be more specific, a batch of images are fed into a deep convolution neural network (DCNN), and high-level feature weights are extracted from them. These in turn are fed into an Isolation Forest anomaly algorithm, and those images with the highest scores are displayed.
 
-*It would be too easy to cherry pick results, so you also have the option of trying it out yourself with photos that you upload.*
+*It would be too easy to cherry pick results, so users had the option of trying out the app themselves with photos that they uploaded.*
 
 ## Outline:
 * <a href="#iForest">Isolation Forest</a>
@@ -78,7 +78,7 @@ For fc6 and fc7 there are 4096 feature weights.
 Weights from fc8 correspond to the 1000 probabilities assigned to each of the 1000 ImageNet classes; in this case they represent classes, rather than high-level features.
 Anomaly scores for each image are separately calculated using the 3 sets of weights. The images presented to the user are ranked according to fc7 scores.
 
-&sup2;[Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. ~Imagenet classification with deep convolutional neural networks.~ Advances in neural information processing systems, 2012](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf)
+&sup2;[Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. *Imagenet classification with deep convolutional neural networks.*, Advances in neural information processing systems, 2012](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf)
 
 ## <a name="#results">Results</a>
 
@@ -86,13 +86,13 @@ The following example illustrates the type of results obtained.
 In this case, images of 55 tigers, along with 3 leopards, 3 house cats, and an actual house were provided.
 
 <center>
-![Tigers and leopards and kitties, Oh My!](https://github.com/mw0/gcp/blob/master/presentation/tigersNstuff.png "Some of the tiger image set.")
+![Some of the tiger image set.](https://github.com/mw0/gcp/blob/master/presentation/tigersNstuff.png)
 </center>
 
 The 10 "most anomalous" images returned are shown below:
 
 <center>
-![Not Tigers, Oh My!](https://github.com/mw0/gcp/blob/master/presentation/tigerAnomRanked.png "Least tiger-like.")
+![Least tiger-like.](https://github.com/mw0/gcp/blob/master/presentation/tigerAnomRanked.png)
 </center>
 
 * It is easy to see that these "most anomalous" include two of the three house cats, the three leopards, and the house.
@@ -115,4 +115,4 @@ When you try out the app yourself, you will find that there is a bit of a wait w
 
 Most of the time, &gt; 75%, is spent pre-processing images (re-sizing and subtracting training pixel averages), with the time required to push those images through the neural network only about 1% of the total. Clearly, the GPUs are used to great advantage in the neural network, but are not employed when re-sizing the images.  
   
-Generating the isolation forest trees and extracting anomaly scores for the three feature sets typically takes 10-20% of the total time. If you run this yourself, you may find that the greatest time required is that to upload your images in the first place.
+Generating the isolation forest trees and extracting anomaly scores for the three feature sets typically takes 10-20% of the total time. If you run this yourself, you may find that the greatest time required is that to upload your images in the first place!
