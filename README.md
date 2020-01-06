@@ -86,14 +86,13 @@ The following example illustrates the type of results obtained.
 In this case, images of 55 tigers, along with 3 leopards, 3 house cats, and an actual house were provided.
 
 <center>
-![Isolating Points with iTrees](https://github.com/mw0/gcp/blob/master/presentation/ITreeIsolatingPoints.png)
-![Some of the tiger image set.](https://github.com/mw0/gcp/blob/master/presentation/tigersNstuff.png)
+![Some of the tiger image set.](https://github.com/mw0/gcp/raw/master/presentation/tigersNstuff.png)
 </center>
 
 The 10 "most anomalous" images returned are shown below:
 
 <center>
-![Least tiger-like.](https://github.com/mw0/gcp/blob/master/presentation/tigerAnomRanked.png)
+![Least tiger-like.](https://github.com/mw0/gcp/raw/master/presentation/tigerAnomRanked.png)
 </center>
 
 * It is easy to see that these "most anomalous" include two of the three house cats, the three leopards, and the house.
