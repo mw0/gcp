@@ -86,6 +86,7 @@ The following example illustrates the type of results obtained.
 In this case, images of 55 tigers, along with 3 leopards, 3 house cats, and an actual house were provided.
 
 <center>
+![Isolating Points with iTrees](https://github.com/mw0/gcp/blob/master/presentation/ITreeIsolatingPoints.png)
 ![Some of the tiger image set.](https://github.com/mw0/gcp/blob/master/presentation/tigersNstuff.png)
 </center>
 
