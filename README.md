@@ -78,7 +78,7 @@ For our image anomaly framework, we insert re-sized images into the DCNN, after 
 Feature weights at the final three fully-connected layers ('fc6', 'fc7' and 'fc8') are extracted, and separately inserted into the Isolation Forest analyzer.
 For fc6 and fc7 there are 4096 feature weights.
 Weights from fc8 correspond to the 1000 probabilities assigned to each of the 1000 ImageNet classes; in this case they represent classes, rather than high-level features.
-Anomaly scores for each image are separately calculated using the 3 sets of weights. The images presented to the user are ranked according to fc7 scores.
+Anomaly scores for each image are separately calculated using the 3 sets of weights. The images presented to the user are ranked according to fc7 scores, although in this instance, the fc6 and fc7 scores provide the same rankings.
 
 &sup2;[Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. *Imagenet classification with deep convolutional neural networks.*, Advances in neural information processing systems, 2012](http://www.cs.toronto.edu/~fritz/absps/imagenet.pdf)
 
@@ -108,7 +108,7 @@ The 10 "most anomalous" images returned are shown below:
   * each of these distinctions is encoded in the high-level features extracted from the neural network, while our own brains are prejudiced by the construction of the description above to focus soley  on classifying the central object.
 * Isolation Forest relies on randomness, so each time it is done there are small variations in the scores. This can affect the ordering of the results displayed.
 
-#### An example like this is subject to tampering by the author. You should try out the app (currently off-line, alas) yourself, using images that you choose!
+#### An example like this is subject to tampering by the author. You should try out the app (currently off-line, alas), using images that you choose!
 
 ## <a name="profiling">Basic Profiling</a>
 
@@ -117,7 +117,7 @@ When you try out the app yourself, you will find that there is a bit of a wait w
 ||initialize Caffe|validate images|pre-process images|push through network|iForest on fc6|iForest on fc7|iForest on fc8|iForest combined|total|
 |----|--------------|---------------|------------------|--------------------|--------------|--------------|--------------|----------------|-----|
 |time|0.005&nbsp;s|00&nbsp;m,&nbsp;1.44&nbsp;s|00&nbsp;m,&nbsp;15.90&nbsp;s|00&nbsp;m,&nbsp;0.24&nbsp;s|1.036&nbsp;s|0.899&nbsp;s|0.589&nbsp;s|00&nbsp;m,&nbsp;2.52&nbsp;s|00&nbsp;m,&nbsp;20.11&nbsp;s|
-|fraction|0.000|0.072|0.791|0.012|0.052|0.045|0.029|0.126||
+|fraction|0.000|0.072|0.791|0.012|0.052|0.045|0.029|0.126|1.000|
 
 Most of the time, &gt; 75%, is spent pre-processing images (re-sizing and subtracting training pixel averages), with the time required to push those images through the neural network only about 1% of the total. Clearly, the GPUs are used to great advantage in the neural network, but are not employed when re-sizing the images.  
   
