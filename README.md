@@ -3,7 +3,9 @@
 #### *A Capstone Project for the Galvanize Data Science Immersive Program, by Mark Wilber*
 
 <center>
-![Which of these does not belong?](SesameStreetWhichNotAlike.png)
+
+![Which of these does not belong?](https://github.com/mw0/gcp/blob/master/SesameStreetWhichNotAlike.png)
+
 </center>
 
 ## Overview:
@@ -86,8 +88,8 @@ The following example illustrates the type of results obtained.
 In this case, images of 55 tigers, along with 3 leopards, 3 house cats, and an actual house were provided.
 
 <center>
-![
-Some of the tiger image set.](https://github.com/mw0/gcp/blob/master/presentation/tigersNstuff.png)
+
+![Some of the tiger image set.](https://github.com/mw0/gcp/blob/master/presentation/tigersNstuff.png)
 
 </center>
 
@@ -106,7 +108,7 @@ The 10 "most anomalous" images returned are shown below:
   * each of these distinctions is encoded in the high-level features extracted from the neural network, while our own brains are prejudiced by the construction of the description above to focus soley  on classifying the central object.
 * Isolation Forest relies on randomness, so each time it is done there are small variations in the scores. This can affect the ordering of the results displayed.
 
-#### An example like this is subject to tampering. You should [try out the app yourself](http://www.rustytrephine.info "try this App! ") using images that you choose!
+#### An example like this is subject to tampering by the author. You should try out the app (currently off-line, alas) yourself, using images that you choose!
 
 ## <a name="profiling">Basic Profiling</a>
 
